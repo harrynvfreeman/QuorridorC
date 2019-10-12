@@ -25,7 +25,7 @@ const int NUM_COLS = 17;
 const int NUM_BLOCKS = 5;
 const float e = 0.25;
 //const float e = 0;
-const float Cpuct = 2;
+const float Cpuct = 1;
 
 int mapTest();
 Player * playerTest();
@@ -37,12 +37,20 @@ QE * qeTest3();
 void nodeTest0();
 void nodeTest1();
 void playTest0();
+void selfPlayTest0();
 
 int main() {
 	srand(time(NULL));
-	playTest0();
+	selfPlayTest0();
 	//printf("%d \n", tile->yPos);
 	printf("Hello \n");
+}
+
+void selfPlayTest0() {
+	QE * qe = resetQE();
+	Tree * tree = (Tree*)malloc(sizeof(Tree));
+	tree->rootNode = createNode(qe);
+	selfPlay(400, tree);
 }
 
 void playTest0() {

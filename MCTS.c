@@ -34,6 +34,153 @@ Node * createChild(Node * parent, QE * state, int move, float p) {
 	return child;
 }
 
+void clearNode(Node * node) {
+	//Need to free state
+	clearQE(node->state);
+		
+	for (int i = 0; i < node->numChildren; i++) {
+		Node * child = *(node->children + i);
+		clearNode(child);
+	}
+	
+	free(node->children);
+	
+	free(node);
+}
+
+// void clearSingleNode(Node * node) {
+// 	//Need to free state
+// 	clearQE(node->state);
+// 	free(node->parent);
+// 	free(node->N);
+// 	free(node->Q);
+// 	free(node->W);
+// 	free(node->P);
+// 	free(node->vLoss);
+// 	free(node->children);
+// 	
+// 	free(node);
+// }
+
+//Ignoring temperature for now
+//Ignoring resignation for now
+//can remove parent removal if we want to debug
+//actually I am going to keep the parent so I can keep the history
+void playButDoesNotWorkIdkWhy(Tree * tree) {	
+	float pi;
+	float piSum = 0;
+	
+	Node * node = tree->rootNode;
+	
+	float r = ((float)rand())/((float)(RAND_MAX));
+	
+	int index = 0;
+	int move = -1;
+	
+	while (index < node->numChildren && move == -1) {
+		pi = (*(node->children + index))->N / node->N;
+		piSum = piSum + pi;
+		if (r <= piSum) {
+			//move = (*(node->children + index))->move;
+			move = 0;
+		}
+		
+		index = index + 1;
+	}
+	
+	//For debugging
+	if (move == -1) {
+		// printf("Something went horribly horribly wrong \n");
+// 		printf("piSum is %f \n", piSum);
+// 		for (int debug = 0; debug < node->numChildren; debug++) {
+// 			pi = (*(node->children + debug))->N / node->N;
+// 			printf("pi is %f for move %d \n", pi, (*(node->children + debug))->move);
+// 		}
+		index = index -1;
+		//move = (*(node->children + index))->move;
+	}
+	
+	Node * nextNode = *(node->children + index);
+	//nextNode->parent = NULL;  For now keep parent, but set has parent to 0
+	nextNode->hasParent = 0;
+	
+	//Need to clear all memory for non root
+	// for (int i = 0; i < node->numChildren; i++) {
+// 		if (i != index) {
+// 			clearNode(*(node->children + i));
+// 		}
+// 	}
+	
+	//clearSingleNode(node); Will not clear.  Keeping parent history, except for children
+	tree->rootNode = nextNode;
+	
+}
+
+void play(Tree * tree) {
+	//int r = rand() % tree->rootNode->numChildren;
+	//tree->rootNode = *(tree->rootNode->children + r);
+	
+	float pi;
+	float piSum = 0;
+	
+	Node * node = tree->rootNode;
+	
+	float r = ((float)rand())/((float)(RAND_MAX));
+	
+	int index = 0;
+	int found = 0;
+	
+	while (index < node->numChildren - 1 && found == 0) {
+		pi = (*(node->children + index))->N / node->N;
+		piSum = piSum + pi;
+		if (r <= piSum) {
+			found = 1;
+		}
+		index = index + 1;
+	}
+	
+	Node * nextRootNode = *(node->children + index);
+	nextRootNode->hasParent = 0;
+	
+	//Need to clear all memory for non root
+	for (int i = 0; i < node->numChildren; i++) {
+		if (i != index) {
+			clearNode(*(node->children + i));
+		}
+	}
+	
+	tree->rootNode = nextRootNode;
+}
+
+void testPlayThisWorksNoClear(Tree * tree) {
+	//int r = rand() % tree->rootNode->numChildren;
+	//tree->rootNode = *(tree->rootNode->children + r);
+	
+	float pi;
+	float piSum = 0;
+	
+	Node * node = tree->rootNode;
+	
+	float r = ((float)rand())/((float)(RAND_MAX));
+	
+	int index = 0;
+	int found = 0;
+	
+	while (index < node->numChildren - 1 && found == 0) {
+		pi = (*(node->children + index))->N / node->N;
+		piSum = piSum + pi;
+		if (r <= piSum) {
+			found = 1;
+		}
+		index = index + 1;
+	}
+	
+	Node * nextRootNode = *(node->children + index);
+	nextRootNode->hasParent = 0;
+	
+	tree->rootNode = nextRootNode;
+}
+
 void backup(Node * origNode, float v) {
 	Node * node = origNode;
 	while(node->hasParent == 1) {
@@ -75,7 +222,7 @@ void expandAndEvaluate(Node * node, float * p) {
 Node * select(Node * rootNode) {
 	Node * node = rootNode;
 	while (node->numChildren > 0) {
-		
+		//printf("Step0 \n");
 		//Simulate dirichlet noise.  
 		//float * dirichlet = (float*)calloc(node->numChildren, sizeof(float));
 		//int r = rand()%(node->numChildren);
@@ -83,8 +230,8 @@ Node * select(Node * rootNode) {
 		float diriVal;
 		
 		int index = rand() % (node->numChildren);
-		
 		Node * child = *(node->children + index);
+		//printf("%d \n", node->numChildren);
 		float Q = child->Q;
 		float N = node->N;
 		float P;
@@ -102,7 +249,6 @@ Node * select(Node * rootNode) {
 			//P = (1-e)*(child->P) + e*(*(dirichlet + index));
 			P = (1-e)*(child->P) + e*diriVal;
 		}
-				
 		float U = Cpuct * P * sqrtf(N) / (child->N + 1);
 		float maxVal = Q + U;
 		Node * maxChild = child;

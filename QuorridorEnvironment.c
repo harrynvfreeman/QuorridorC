@@ -47,6 +47,7 @@ void updateGameState(QE * qe);
 void renderTileRow(QE* qe, char * rend, int row);
 void renderBlockRow(QE * qe, char * rend, int row);
 Tile *** cloneBoard(Tile *** cloneFrom);
+void clearBoard(Tile *** board);
 
 
 //currPlayer 1 is playerA, -1 playerB
@@ -134,10 +135,20 @@ QE * cloneQE(QE * cloneFrom) {
 	return qe;
 }
 
-void clearState(QE * qe) {
+void clearQE(QE * qe) {
 	free(qe->playerA);
 	free(qe->playerB);
 	clearBoard(qe->board);
+	free(qe->availBlockVertPlace);
+	free(qe->availBlockHorizPlace);
+	free(qe->placedVertBlocks);
+	free(qe->placedHorizBlocks);
+	free(qe->hash);
+	empty(qe->pastStates);
+	free(qe->pastStates);
+	free(qe->gameState);
+	
+	free(qe);
 }
 
 Tile *** initBoard() {
@@ -172,7 +183,7 @@ Tile *** cloneBoard(Tile *** cloneFrom) {
 void clearBoard(Tile *** board) {
 	for (int i = 0; i < BOARD_HEIGHT; i++) {
 		for (int j = 0; j < BOARD_WIDTH; j++) {
-			Tile * tile = clearTile(cloneFrom[i][j]);
+			Tile * tile = board[i][j];
 			free(tile);
 		}
 		free(*(board + i));

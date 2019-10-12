@@ -59,6 +59,7 @@ int step(QE * qe, int action);
 int * calcStateHash(QE * qe);
 char * render(QE * qe, int display);
 QE * cloneQE(QE * cloneFrom);
+void clearQE(QE * qe);
 
 //from MCTS.c
 Node * createNode(QE * state);
@@ -66,8 +67,11 @@ Node * createChild(Node * parent, QE * state, int move, float p);
 Node * select(Node * rootNode);
 void expandAndEvaluate(Node * node, float * p);
 void backup(Node * origNode, float v);
+void clearNode(Node * node);
+void play(Tree * tree);
 
 //from play
 void search(int numSimulations, Tree * tree);
+void selfPlay(int numSimulations, Tree * tree);
 
 #endif
