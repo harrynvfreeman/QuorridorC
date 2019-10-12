@@ -6,6 +6,9 @@ typedef struct Tile Tile;
 typedef struct QE QE;
 typedef struct HashMap HashMap;
 typedef struct MapNode MapNode;
+typedef struct Node Node;
+// typedef struct Edge Edge;
+typedef struct Tree Tree;
 
 struct Player {
 	int yPos;
@@ -52,6 +55,40 @@ struct MapNode {
 
 struct HashMap {
 	MapNode * list;
+};
+
+struct Node {
+	//from Node
+	QE * state;
+	Node ** children;
+	int numChildren;
+	Node * parent;
+	int hasParent;
+	
+	//from Actions
+	//treating this as the child
+	float N;
+	float W;
+	float Q;
+	float P;
+	float vLoss; //vLoss leading to this
+	//Node * parent;
+	int move; //move that lead to this
+};
+
+// struct Edge {
+// 	float * N;
+// 	float * W;
+// 	float * Q;
+// 	float * P;
+// 	float * vLoss;
+// 	Node * child;
+// 	Node * parent;
+// 	int * move;
+// };
+
+struct Tree {
+	Node * rootNode;
 };
 
 

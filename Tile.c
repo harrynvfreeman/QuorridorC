@@ -43,3 +43,15 @@ Tile * initTile(int yPos, int xPos, int minY, int minX, int maxY, int maxX) {
 	
 	return tile;
 }
+
+Tile * cloneTile(Tile * cloneFrom) {
+	Tile * tile = (Tile*)malloc(sizeof(Tile));
+	tile->yPos = cloneFrom->yPos;
+	tile->xPos = cloneFrom->xPos;
+	tile->neighbourUp = cloneFrom->neighbourUp;
+	tile->neighbourDown = cloneFrom->neighbourDown;
+	tile->neighbourRight = cloneFrom->neighbourRight;
+	tile->neighbourLeft = cloneFrom->neighbourLeft;
+	
+	return tile;
+}

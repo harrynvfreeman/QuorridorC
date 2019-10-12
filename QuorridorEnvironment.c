@@ -42,10 +42,11 @@ int isPlaceHorizontalBlockValid(QE * qe, int m);
 void placeHorizontalBlock(QE * qe, int m);
 void putHorizBlock(int * outPos, QE * qe, int m);
 void pickUpHorizBlock(int * outPos, QE * qe, int m);
-int dfs(Tile * tile, Tile *** board, int yTarget, int ** visited);
+int dfs(Tile * tile, Tile *** board, int yTarget, int ** visited, int action);
 void updateGameState(QE * qe);
 void renderTileRow(QE* qe, char * rend, int row);
 void renderBlockRow(QE * qe, char * rend, int row);
+Tile *** cloneBoard(Tile *** cloneFrom);
 
 
 //currPlayer 1 is playerA, -1 playerB
@@ -86,6 +87,59 @@ QE * resetQE() {
 	return qe;
 }
 
+QE * cloneQE(QE * cloneFrom) {
+	QE * qe = (QE*)malloc(sizeof(QE));
+	Player * playerA = clonePlayer(cloneFrom->playerA);
+	Player * playerB = clonePlayer(cloneFrom->playerB);
+	Player * currPlayer;
+	Player * nextPlayer;
+	if (cloneFrom->currPlayer->winVal == playerA->winVal) {
+		currPlayer = playerA;
+		nextPlayer = playerB;
+	} else {
+		currPlayer = playerB;
+		nextPlayer = playerA;
+	}
+	Tile *** board = cloneBoard(cloneFrom->board);
+	int * availBlockVertPlace = (int*)malloc((BOARD_HEIGHT-1)*(BOARD_WIDTH-1)*sizeof(int));
+	int * availBlockHorizPlace = (int*)malloc((BOARD_HEIGHT-1)*(BOARD_WIDTH-1)*sizeof(int));
+	memcpy(availBlockVertPlace, cloneFrom->availBlockVertPlace, (BOARD_HEIGHT-1)*(BOARD_WIDTH-1)*sizeof(int));
+	memcpy(availBlockHorizPlace, cloneFrom->availBlockHorizPlace, (BOARD_HEIGHT-1)*(BOARD_WIDTH-1)*sizeof(int));
+	int * placedVertBlocks = (int*)malloc((BOARD_HEIGHT-1)*(BOARD_WIDTH-1)*sizeof(int));
+	int * placedHorizBlocks = (int*)malloc((BOARD_HEIGHT-1)*(BOARD_WIDTH-1)*sizeof(int));
+	memcpy(placedVertBlocks, cloneFrom->placedVertBlocks, (BOARD_HEIGHT-1)*(BOARD_WIDTH-1)*sizeof(int));
+	memcpy(placedHorizBlocks, cloneFrom->placedHorizBlocks, (BOARD_HEIGHT-1)*(BOARD_WIDTH-1)*sizeof(int));
+	int turnNum = cloneFrom->turnNum;
+	int winner = cloneFrom->winner;
+	int isGameOver = cloneFrom->isGameOver;
+	int * gameState = (int*)malloc((NUM_CHANNELS*NUM_ROWS*NUM_COLS)*sizeof(int));
+	memcpy(gameState, cloneFrom->gameState, (NUM_CHANNELS*NUM_ROWS*NUM_COLS)*sizeof(int));
+	
+	qe->playerA = playerA;
+	qe->playerB = playerB;
+	qe->currPlayer = currPlayer;
+	qe->nextPlayer = nextPlayer;
+	qe->board = board;
+	qe->availBlockVertPlace = availBlockVertPlace;
+	qe->availBlockHorizPlace = availBlockHorizPlace;
+	qe->placedVertBlocks = placedVertBlocks;
+	qe->placedHorizBlocks = placedHorizBlocks;
+	qe->turnNum = turnNum;
+	qe->winner = winner;
+	qe->isGameOver = isGameOver;
+	qe->hash = calcStateHash(qe);
+	qe->pastStates = cloneMap(cloneFrom->pastStates);
+	qe->gameState = gameState;
+	
+	return qe;
+}
+
+void clearState(QE * qe) {
+	free(qe->playerA);
+	free(qe->playerB);
+	clearBoard(qe->board);
+}
+
 Tile *** initBoard() {
 	Tile *** board = (Tile***)malloc(BOARD_HEIGHT*sizeof(Tile**));
 	for (int i = 0; i < BOARD_HEIGHT; i++) {
@@ -98,6 +152,33 @@ Tile *** initBoard() {
 	}
 	
 	return board;
+}
+
+Tile *** cloneBoard(Tile *** cloneFrom) {
+	Tile *** board = (Tile***)malloc(BOARD_HEIGHT*sizeof(Tile**));
+	for (int i = 0; i < BOARD_HEIGHT; i++) {
+		Tile** iBoard = (Tile**)malloc(BOARD_WIDTH*sizeof(Tile*));
+		for (int j = 0; j < BOARD_WIDTH; j++) {
+			Tile * tile = cloneTile(cloneFrom[i][j]);
+			*(iBoard + j) = tile;
+		}
+		
+		*(board + i) = iBoard;
+	}
+	
+	return board;
+}
+
+void clearBoard(Tile *** board) {
+	for (int i = 0; i < BOARD_HEIGHT; i++) {
+		for (int j = 0; j < BOARD_WIDTH; j++) {
+			Tile * tile = clearTile(cloneFrom[i][j]);
+			free(tile);
+		}
+		free(*(board + i));
+	}
+	
+	free(board);
 }
 
 void initAvailBlockPlace(int * availBlockVertPlace, int * availBlockHorizPlace) {
@@ -134,6 +215,10 @@ void initAvailBlockPlace(int * availBlockVertPlace, int * availBlockHorizPlace) 
 // }
 
 int validate(QE * qe, int action) {
+	if(qe->isGameOver == 1) {
+		return 0;
+	}
+
 	if (action == 0) {
 		return isMovePlayerUpValid(qe);
 	} else if (action == 1) {
@@ -177,7 +262,8 @@ int validate(QE * qe, int action) {
 		&& action <= 12 + (BOARD_HEIGHT-1)*(BOARD_WIDTH-1) + posToValHorizBlock(MAX_Y-1, MAX_X-1, BOARD_HEIGHT)) {
 		return isPlaceHorizontalBlockValid(qe, action - 12 - (BOARD_HEIGHT-1)*(BOARD_WIDTH-1));	
 	} else {
-		return -1;
+		//return -1;
+		return 0;
 	}
 }
 
@@ -208,14 +294,15 @@ int step(QE * qe, int action) {
 		movePlayerUpLeft(qe);
 	} else if (action >= 12 + posToValVertBlock(MIN_Y, MIN_X, BOARD_WIDTH) &&
 		action <= 12 + posToValVertBlock(MAX_Y-1, MAX_X-1, BOARD_WIDTH)) {
-		placeVerticalBlock(qe, action - 12);	
+		placeVerticalBlock(qe, action - 12);
 		empty(qe->pastStates);
 	} else if (action >= 12 + (BOARD_HEIGHT-1)*(BOARD_WIDTH-1) + posToValHorizBlock(MIN_Y, MIN_X, BOARD_HEIGHT)
 		&& action <= 12 + (BOARD_HEIGHT-1)*(BOARD_WIDTH-1) + posToValHorizBlock(MAX_Y-1, MAX_X-1, BOARD_HEIGHT)) {
 		placeHorizontalBlock(qe, action - 12 - (BOARD_HEIGHT-1)*(BOARD_WIDTH-1));
 		empty(qe->pastStates);	
 	} else {
-		return -1;
+		//return -1;
+		return 0;
 	}
 	
 	qe->turnNum = qe->turnNum + 1;
@@ -224,6 +311,8 @@ int step(QE * qe, int action) {
 	qe->nextPlayer = tempPlayer;
 	
 	int * hash = calcStateHash(qe);
+	
+	free(qe->hash);
 		
 	qe->hash = hash;
 	
@@ -667,6 +756,7 @@ int isPlaceVerticalBlockValid(QE * qe, int m) {
 		return 0;
 	}
 	
+	
 	if (*(qe->availBlockVertPlace + m) == 0) {
 		return 0;
 	}
@@ -677,22 +767,27 @@ int isPlaceVerticalBlockValid(QE * qe, int m) {
 	int ** visitedCurr = (int**)malloc(BOARD_HEIGHT*sizeof(int*));
 	int ** visitedNext = (int**)malloc(BOARD_HEIGHT*sizeof(int*));
 	for (int i = 0; i < BOARD_HEIGHT; i++) {
-		*(visitedCurr + i) = (int*)calloc(BOARD_WIDTH, sizeof(int));
-		*(visitedNext + i) = (int*)calloc(BOARD_WIDTH, sizeof(int));
+		*(visitedCurr + i) = (int*)malloc(BOARD_WIDTH*sizeof(int));
+		*(visitedNext + i) = (int*)malloc(BOARD_WIDTH*sizeof(int));
 	}
+	int dfsResultCurr = dfs(qe->board[qe->currPlayer->yPos][qe->currPlayer->xPos], qe->board, qe->currPlayer->yTarget, visitedCurr, m);
+	int dfsResultNext = dfs(qe->board[qe->nextPlayer->yPos][qe->nextPlayer->xPos], qe->board, qe->nextPlayer->yTarget, visitedNext, m+1);
 	
-	int dfsResultCurr = dfs(qe->board[qe->currPlayer->yPos][qe->currPlayer->xPos], qe->board, qe->currPlayer->yTarget, visitedCurr);
-	int dfsResultNext = dfs(qe->board[qe->nextPlayer->yPos][qe->nextPlayer->xPos], qe->board, qe->nextPlayer->yTarget, visitedNext);
 	//WARNING not sure about this
 	for (int i = 0; i < BOARD_HEIGHT; i++) {
 		free(*(visitedCurr + i));
+		*(visitedCurr + i) = NULL;
 		free(*(visitedNext + i));
+		*(visitedNext + i) = NULL;
 	}
 	free(visitedCurr);
 	free(visitedNext);
+	visitedCurr = NULL;
+	visitedNext = NULL;
 	
 	pickUpVertBlock(outPos, qe, m);
 	free(outPos);
+	outPos = NULL;
 	if (dfsResultCurr == 0 || dfsResultNext == 0) {
 		return 0;
 	}
@@ -723,6 +818,7 @@ void placeVerticalBlock(QE * qe, int m) {
 	*(qe->placedVertBlocks + m) = 1;
 	
 	free(outPos);
+	outPos = NULL;
 }
 
 void putVertBlock(int * outPos, QE * qe, int m) {
@@ -773,18 +869,23 @@ int isPlaceHorizontalBlockValid(QE * qe, int m) {
 		*(visitedNext + i) = (int*)calloc(BOARD_WIDTH, sizeof(int));
 	}
 	
-	int dfsResultCurr = dfs(qe->board[qe->currPlayer->yPos][qe->currPlayer->xPos], qe->board, qe->currPlayer->yTarget, visitedCurr);
-	int dfsResultNext = dfs(qe->board[qe->nextPlayer->yPos][qe->nextPlayer->xPos], qe->board, qe->nextPlayer->yTarget, visitedNext);
+	int dfsResultCurr = dfs(qe->board[qe->currPlayer->yPos][qe->currPlayer->xPos], qe->board, qe->currPlayer->yTarget, visitedCurr, m);
+	int dfsResultNext = dfs(qe->board[qe->nextPlayer->yPos][qe->nextPlayer->xPos], qe->board, qe->nextPlayer->yTarget, visitedNext, m);
 	//WARNING not sure about this
 	for (int i = 0; i < BOARD_HEIGHT; i++) {
 		free(*(visitedCurr + i));
+		*(visitedCurr + i) = NULL;
 		free(*(visitedNext + i));
+		*(visitedNext + i) = NULL;
 	}
 	free(visitedCurr);
+	visitedCurr = NULL;
 	free(visitedNext);
+	visitedNext = NULL;
 	
 	pickUpHorizBlock(outPos, qe, m);
 	free(outPos);
+	outPos = NULL;
 	if (dfsResultCurr == 0 || dfsResultNext == 0) {
 		return 0;
 	}
@@ -815,6 +916,7 @@ void placeHorizontalBlock(QE * qe, int m) {
 	*(qe->placedHorizBlocks + m) = 1;
 	
 	free(outPos);
+	outPos = NULL;
 }
 
 void putHorizBlock(int * outPos, QE * qe, int m) {
@@ -846,7 +948,7 @@ void pickUpHorizBlock(int * outPos, QE * qe, int m) {
 	
 }
 
-int dfs(Tile * tile, Tile *** board, int yTarget, int ** visited) {
+int dfs(Tile * tile, Tile *** board, int yTarget, int ** visited, int action) {
 	if (tile->yPos == yTarget) {
 		return 1;
 	}
@@ -858,25 +960,25 @@ int dfs(Tile * tile, Tile *** board, int yTarget, int ** visited) {
 	visited[tile->yPos][tile->xPos] = 1;
 	
 	if (tile->neighbourUp == 1) {
-		if (dfs(board[tile->yPos + 1][tile->xPos], board, yTarget, visited) == 1) {
+		if (dfs(board[tile->yPos + 1][tile->xPos], board, yTarget, visited, action) == 1) {
 			return 1;
 		}
 	}
 	
 	if (tile->neighbourDown == 1) {
-		if (dfs(board[tile->yPos - 1][tile->xPos], board, yTarget, visited) == 1) {
+		if (dfs(board[tile->yPos - 1][tile->xPos], board, yTarget, visited, action) == 1) {
 			return 1;
 		}
 	}
 	
 	if (tile->neighbourRight == 1) {
-		if (dfs(board[tile->yPos][tile->xPos + 1], board, yTarget, visited) == 1) {
+		if (dfs(board[tile->yPos][tile->xPos + 1], board, yTarget, visited, action) == 1) {
 			return 1;
 		}
 	}
 	
 	if (tile->neighbourLeft == 1) {
-		if (dfs(board[tile->yPos][tile->xPos - 1], board, yTarget, visited) == 1) {
+		if (dfs(board[tile->yPos][tile->xPos - 1], board, yTarget, visited, action) == 1) {
 			return 1;
 		}
 	}
@@ -948,6 +1050,7 @@ char * render(QE * qe, int display) {
 			}
 			printf("\n");
 		}
+		printf("------------------------------\n");
 	}
 	
 	return rend;
@@ -986,6 +1089,17 @@ void renderBlockRow(QE * qe, char * rend, int row) {
 		}
 	}
 }
+
+// void getValidMoves(QE * qe, int * isValid) {
+// 	if (qe->isGameOver == 1) {
+// 		memset(isValid, 0, NUM_MOVES*sizeof(int));
+// 		return;
+// 	}
+// 
+// 	for (int i = 0; i < NUM_MOVES; i++) {
+// 		*(isValid + i) = validate(qe, i);
+// 	}
+// }
 
 
 

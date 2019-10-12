@@ -12,3 +12,14 @@ Player * initPlayer(int yPos, int xPos, int yTarget, int numBlocks, int winVal) 
 	
 	return player;
 }
+
+Player * clonePlayer(Player * cloneFrom) {
+	Player * player = (Player*)malloc(sizeof(Player));
+	player->yPos = cloneFrom->yPos;
+	player->xPos = cloneFrom->xPos;
+	player->yTarget = cloneFrom->yTarget;
+	player->numBlocks = cloneFrom->numBlocks;
+	player->winVal = cloneFrom->winVal;
+	
+	return player;
+}

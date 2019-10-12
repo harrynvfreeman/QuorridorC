@@ -4,6 +4,9 @@
 #include <string.h>
 #include <stdio.h>
 
+MapNode * cloneMapNode(MapNode * cloneFrom);
+
+//there is a function to make this quicker.
 int compareHash(int * a, int * b) {
 	for (int i = 0; i < hash_size; i++) {
 		if (*(a+i) != *(b+i)) {
@@ -20,6 +23,40 @@ HashMap * createHashMap() {
 	map->list = NULL;
 	
 	return map;
+}
+
+HashMap * cloneMap(HashMap * cloneFrom) {
+	HashMap * map = (HashMap*)malloc(sizeof(HashMap));
+	
+	if (cloneFrom->list == NULL) {
+		map->list = NULL;
+		return map;
+	}
+	
+	MapNode * cloneFromNode = cloneFrom->list;
+	MapNode * curr = cloneMapNode(cloneFromNode);
+	map->list = curr;
+	
+	while(cloneFromNode->next != NULL) {
+		cloneFromNode = cloneFromNode->next;
+		curr->next = cloneMapNode(cloneFromNode);
+		curr = curr->next;
+	}
+	
+	return map;
+}
+
+MapNode * cloneMapNode(MapNode * cloneFrom) {
+	MapNode * mapNode = (MapNode*)malloc(sizeof(MapNode));
+	int * key = (int*)malloc(hash_size*sizeof(int));
+	memcpy(key, cloneFrom->key, hash_size*sizeof(int));
+	int val = cloneFrom->val;
+	
+	mapNode->key = key;
+	mapNode->val = val;
+	mapNode->next = NULL;
+	
+	return mapNode;
 }
 
 // int hashCode(HashMap * map,int key){
@@ -40,7 +77,9 @@ void insert(HashMap * map, int * key, int val) {
     }
     
     MapNode * nodeToAdd = (MapNode*)malloc(sizeof(MapNode));
-    nodeToAdd->key = key;
+    int * keyCopy = (int *)malloc(hash_size*sizeof(int));
+    memcpy(keyCopy, key, hash_size*sizeof(int));
+    nodeToAdd->key = keyCopy;
     nodeToAdd->val = val;
     nodeToAdd->next = head;
     map->list = nodeToAdd;
@@ -61,14 +100,17 @@ int lookup(HashMap * map, int * key) {
 }
 
 void empty(HashMap * map) {
-	MapNode * head = map->list;
-	MapNode * temp = head;
-	while(temp) {
-		head = temp->next;
+	int i = 0;
+	MapNode * curr = map->list;
+	MapNode * next;
+	while(curr != NULL) {
+		next = curr->next;
 		//WARNING about free hash
-		free(temp->key);
-		free(temp);
-		temp = head;
+		free(curr->key);
+		curr->key = NULL;
+		free(curr);
+		curr = next;
+		i = i +1;
 	}
 	
 	map->list = NULL;

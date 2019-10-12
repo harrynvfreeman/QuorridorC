@@ -5,12 +5,16 @@
 #include <stdio.h>
 #include <time.h> 
 
-//gcc -o main main.c HashMap.c Player.c Tile.c QuorridorEnvironment.c Utils.c
+//gcc -o main main.c HashMap.c Player.c Tile.c QuorridorEnvironment.c Utils.c MCTS.c Play.c
 //./main
+
+int testDepth(Node * node, int depth);
+int max(int a, int b);
 
 const int BOARD_HEIGHT = 9;
 const int BOARD_WIDTH = 9;
 const int hash_size = (5+2*(BOARD_HEIGHT-1)*(BOARD_WIDTH-1));
+const int NUM_MOVES = 12 + 2*(BOARD_HEIGHT-1)*(BOARD_WIDTH-1);
 const int MAX_Y = 7;
 const int MIN_Y = 2;
 const int MAX_X = 7;
@@ -19,6 +23,9 @@ const int NUM_CHANNELS = 29;
 const int NUM_ROWS = 17;
 const int NUM_COLS = 17;
 const int NUM_BLOCKS = 5;
+const float e = 0.25;
+//const float e = 0;
+const float Cpuct = 2;
 
 int mapTest();
 Player * playerTest();
@@ -27,11 +34,106 @@ QE * qeTest0();
 QE * qeTest1();
 QE * qeTest2(); 
 QE * qeTest3();
+void nodeTest0();
+void nodeTest1();
+void playTest0();
 
 int main() {
-	QE * qe = qeTest3();
+	srand(time(NULL));
+	playTest0();
 	//printf("%d \n", tile->yPos);
 	printf("Hello \n");
+}
+
+void playTest0() {
+	QE * qe = resetQE();
+	Tree * tree = (Tree*)malloc(sizeof(Tree));
+	tree->rootNode = createNode(qe);
+	search(800, tree);
+	
+	Node * testNode = tree->rootNode;
+	printf("Depth is: %d \n", testDepth(testNode, 0));
+	printf("NumChildren is %d \n", testNode->numChildren);
+	printf("Parent N is %f \n", testNode->N);
+	
+	for (int i = 0; i < testNode->numChildren; i++) {
+		printf("Wab: %f, %f, %f, %d, \n", 
+		(*(testNode->children+i))->N, (*(testNode->children+i))->P, (*(testNode->children+i))->Q, (*(testNode->children+i))->move);
+	}
+	
+	// render(testNode->state, 1);
+// 	int r;
+// 	while(testNode->numChildren > 0) {
+// 		r = rand() % (testNode->numChildren);
+// 		testNode = *(testNode->children + r);
+// 		render(testNode->state, 1);
+// 	}
+}
+
+int testDepth(Node * node, int depth) {
+	if (node->numChildren == 0) {
+		return depth;
+	}
+	
+	int maxim = 0;
+	for (int i = 0; i < node->numChildren; i++) {
+		maxim = max(maxim, testDepth(*(node->children + i), depth + 1));
+	}
+	
+	return maxim;
+}
+
+int max(int a, int b) {
+	if (a >= b) {
+	 	return a;
+	}
+	
+	return b;
+}
+
+void nodeTest0() {
+	Node * root = createNode(NULL);
+	Node * out = select(root);
+	
+	if (out == root) {
+		printf("Success \n");
+	} else {
+		printf("Fail \n");
+	}
+}
+
+void nodeTest1() {
+	//Works with Cpuct as 2
+	Node * root = createNode(NULL);
+	Node * child0 = createChild(root, NULL, 0, .5);
+	Node * child1 = createChild(root, NULL, 1, .25);
+	Node * child2 = createChild(root, NULL, 2, .25);
+	
+	root->N = 10;
+	child0->N = 6;
+	child1->N = 2;
+	child2->N = 2;
+	
+	child0->Q = .5;
+	child1->Q = 1.5;
+	child2->Q = 1;
+	
+	child0->W = 3;
+	child1->W = 3;
+	child2->W = 2;
+	
+	Node * out = select(root);
+	
+	if (out == child0 && out->vLoss == 1 && out->Q == (float)2/7) {
+		printf("Success 0 \n");
+	} else if (out == child1 && out->vLoss == 1 && out->Q == (float)2/3) {
+		printf("Success 1 \n");
+	} else if (out == child2 && out->vLoss == 1 && out->Q == (float)1/3) {
+		printf("Success 2 \n");
+	} else {
+		printf("%f \n", out->Q);
+		printf("Fail \n");
+	}
 }
 
 int mapTest() {
