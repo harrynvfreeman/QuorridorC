@@ -23,9 +23,9 @@ const int NUM_CHANNELS = 29;
 const int NUM_ROWS = 17;
 const int NUM_COLS = 17;
 const int NUM_BLOCKS = 5;
-const float e = 0.25;
-//const float e = 0;
-const float Cpuct = 1;
+const double e = 0.25;
+//const double e = 0;
+const double Cpuct = 1;
 
 int mapTest();
 Player * playerTest();
@@ -101,7 +101,7 @@ int max(int a, int b) {
 
 void nodeTest0() {
 	Node * root = createNode(NULL);
-	Node * out = select(root);
+	Node * out = selectMCTS(root);
 	
 	if (out == root) {
 		printf("Success \n");
@@ -130,13 +130,13 @@ void nodeTest1() {
 	child1->W = 3;
 	child2->W = 2;
 	
-	Node * out = select(root);
+	Node * out = selectMCTS(root);
 	
-	if (out == child0 && out->vLoss == 1 && out->Q == (float)2/7) {
+	if (out == child0 && out->vLoss == 1 && out->Q == (double)2/7) {
 		printf("Success 0 \n");
-	} else if (out == child1 && out->vLoss == 1 && out->Q == (float)2/3) {
+	} else if (out == child1 && out->vLoss == 1 && out->Q == (double)2/3) {
 		printf("Success 1 \n");
-	} else if (out == child2 && out->vLoss == 1 && out->Q == (float)1/3) {
+	} else if (out == child2 && out->vLoss == 1 && out->Q == (double)1/3) {
 		printf("Success 2 \n");
 	} else {
 		printf("%f \n", out->Q);

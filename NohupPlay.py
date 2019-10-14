@@ -1,0 +1,3 @@
+import Thread
+
+Thread.constRun()

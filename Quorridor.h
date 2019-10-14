@@ -20,8 +20,87 @@ extern const int hash_size;
 
 extern const int NUM_BLOCKS;
 
-extern const float e;
-extern const float Cpuct;
+extern const double e;
+extern const double Cpuct;
+
+//structs
+typedef struct Player Player;
+typedef struct Tile Tile;
+typedef struct QE QE;
+typedef struct HashMap HashMap;
+typedef struct MapNode MapNode;
+typedef struct Node Node;
+typedef struct Tree Tree;
+
+struct Player {
+	int yPos;
+	int xPos;
+	int yTarget;
+	int numBlocks;
+	int winVal;
+};
+
+struct Tile {
+	int yPos;
+	int xPos;
+	int neighbourUp;
+	int neighbourRight;
+	int neighbourDown;
+	int neighbourLeft;
+};
+
+struct QE {
+	Player * playerA;
+	Player * playerB;
+	Tile *** board;
+	Player * currPlayer;
+	Player * nextPlayer;
+	int * availBlockVertPlace;
+	int * availBlockHorizPlace;
+	int * placedVertBlocks;
+	int * placedHorizBlocks;
+	int turnNum; 
+	int * gameState;
+	int * hash;
+	HashMap * pastStates;
+	int winner;
+	int isGameOver;
+};
+
+//http://www.kaushikbaruah.com/posts/data-structure-in-c-hashmap/
+//make sure to reference above
+struct MapNode {
+	int * key;
+	int val;
+	MapNode * next;
+};
+
+struct HashMap {
+	MapNode * list;
+};
+
+struct Node {
+	//from Node
+	QE * state;
+	Node ** children;
+	int numChildren;
+	Node * parent;
+	int hasParent;
+	
+	//from Actions
+	//treating this as the child
+	double N;
+	double W;
+	double Q;
+	double P;
+	double vLoss; //vLoss leading to this
+	//Node * parent;
+	int move; //move that lead to this
+};
+
+struct Tree {
+	Node * rootNode;
+};
 
 //from HashMap.c
 HashMap* createHashMap();
@@ -63,15 +142,18 @@ void clearQE(QE * qe);
 
 //from MCTS.c
 Node * createNode(QE * state);
-Node * createChild(Node * parent, QE * state, int move, float p);
-Node * select(Node * rootNode);
-void expandAndEvaluate(Node * node, float * p);
-void backup(Node * origNode, float v);
+Node * createChild(Node * parent, QE * state, int move, double p);
+Node * selectMCTS(Node * rootNode);
+void expandAndEvaluate(Node * node, double * p);
+void backup(Node * origNode, double v);
 void clearNode(Node * node);
+void clearNodeSingle(Node * node);
 void play(Tree * tree);
 
 //from play
 void search(int numSimulations, Tree * tree);
 void selfPlay(int numSimulations, Tree * tree);
+void searchCython(int numSimulations, Tree * tree, int * gameState, double * v, double * p, int * isCReady, int * isModelReady, int * error);
+void selfPlayCython(int numSimulations, int * gameState, double * v, double * p, int * isCReady, int * isModelReady, int * error);
 
 #endif
