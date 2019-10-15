@@ -1822,6 +1822,7 @@ static PyObject *__pyx_builtin_RuntimeError;
 static PyObject *__pyx_builtin_ImportError;
 static const char __pyx_k_np[] = "np";
 static const char __pyx_k_end[] = "end";
+static const char __pyx_k_set[] = "set: ";
 static const char __pyx_k_args[] = "args";
 static const char __pyx_k_file[] = "file";
 static const char __pyx_k_join[] = "join";
@@ -1844,13 +1845,16 @@ static const char __pyx_k_Thread[] = "Thread";
 static const char __pyx_k_import[] = "__import__";
 static const char __pyx_k_random[] = "random";
 static const char __pyx_k_target[] = "target";
+static const char __pyx_k_Holaaaa[] = "Holaaaa";
 static const char __pyx_k_Started[] = "Started";
 static const char __pyx_k_float32[] = "float32";
+static const char __pyx_k_setting[] = "setting: ";
 static const char __pyx_k_PreStart[] = "PreStart";
 static const char __pyx_k_is_alive[] = "is_alive";
 static const char __pyx_k_pPointer[] = "pPointer";
 static const char __pyx_k_vPointer[] = "vPointer";
 static const char __pyx_k_DTYPE_INT[] = "DTYPE_INT";
+static const char __pyx_k_Dunzaaaaa[] = "Dunzaaaaa";
 static const char __pyx_k_testworks[] = "testworks";
 static const char __pyx_k_threading[] = "threading";
 static const char __pyx_k_ValueError[] = "ValueError";
@@ -1874,9 +1878,11 @@ static const char __pyx_k_numpy_core_umath_failed_to_impor[] = "numpy.core.umath
 static const char __pyx_k_Format_string_allocated_too_shor_2[] = "Format string allocated too short.";
 static PyObject *__pyx_n_s_DTYPE;
 static PyObject *__pyx_n_s_DTYPE_INT;
+static PyObject *__pyx_n_s_Dunzaaaaa;
 static PyObject *__pyx_n_s_Dunzo;
 static PyObject *__pyx_kp_u_Format_string_allocated_too_shor;
 static PyObject *__pyx_kp_u_Format_string_allocated_too_shor_2;
+static PyObject *__pyx_n_s_Holaaaa;
 static PyObject *__pyx_n_s_ImportError;
 static PyObject *__pyx_kp_u_Non_native_byte_order_not_suppor;
 static PyObject *__pyx_n_s_PreStart;
@@ -1912,6 +1918,8 @@ static PyObject *__pyx_n_s_pPointer;
 static PyObject *__pyx_n_s_print;
 static PyObject *__pyx_n_s_random;
 static PyObject *__pyx_n_s_range;
+static PyObject *__pyx_kp_s_set;
+static PyObject *__pyx_kp_s_setting;
 static PyObject *__pyx_n_s_sleep;
 static PyObject *__pyx_n_s_start;
 static PyObject *__pyx_kp_s_stringsource;
@@ -2595,8 +2603,8 @@ static PyObject *__pyx_f_9SelfPlayC_selfPlay(CYTHON_UNUSED int __pyx_skip_dispat
  *             vPointer[0] = vTemp[0][0]
  * 
  *             for i in range(NUM_MOVES):             # <<<<<<<<<<<<<<
- *                 pPointer[i] = pTemp[0][i]
- * 
+ *                 print(pTemp[0][i])
+ *                 print(i)
  */
       __pyx_t_6 = NUM_MOVES;
       __pyx_t_17 = __pyx_t_6;
@@ -2606,28 +2614,91 @@ static PyObject *__pyx_f_9SelfPlayC_selfPlay(CYTHON_UNUSED int __pyx_skip_dispat
         /* "SelfPlay.pyx":71
  * 
  *             for i in range(NUM_MOVES):
- *                 pPointer[i] = pTemp[0][i]             # <<<<<<<<<<<<<<
- * 
- *             isModelReadyPointer[0] = 1
+ *                 print(pTemp[0][i])             # <<<<<<<<<<<<<<
+ *                 print(i)
+ *                 pPointer[i] = pTemp[0][i]
  */
         __pyx_t_2 = __Pyx_GetItemInt(__pyx_v_pTemp, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 71, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
         __pyx_t_1 = __Pyx_GetItemInt(__pyx_t_2, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 71, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
         __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-        __pyx_t_16 = __pyx_PyFloat_AsDouble(__pyx_t_1); if (unlikely((__pyx_t_16 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 71, __pyx_L1_error)
+        if (__Pyx_PrintOne(0, __pyx_t_1) < 0) __PYX_ERR(0, 71, __pyx_L1_error)
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+        /* "SelfPlay.pyx":72
+ *             for i in range(NUM_MOVES):
+ *                 print(pTemp[0][i])
+ *                 print(i)             # <<<<<<<<<<<<<<
+ *                 pPointer[i] = pTemp[0][i]
+ *             print('setting: ' + str(isModelReadyPointer[0]))
+ */
+        __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_i); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 72, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_1);
+        if (__Pyx_PrintOne(0, __pyx_t_1) < 0) __PYX_ERR(0, 72, __pyx_L1_error)
+        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+        /* "SelfPlay.pyx":73
+ *                 print(pTemp[0][i])
+ *                 print(i)
+ *                 pPointer[i] = pTemp[0][i]             # <<<<<<<<<<<<<<
+ *             print('setting: ' + str(isModelReadyPointer[0]))
+ *             isModelReadyPointer[0] = 1
+ */
+        __pyx_t_1 = __Pyx_GetItemInt(__pyx_v_pTemp, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 73, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_1);
+        __pyx_t_2 = __Pyx_GetItemInt(__pyx_t_1, __pyx_v_i, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 73, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_2);
+        __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+        __pyx_t_16 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_16 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 73, __pyx_L1_error)
+        __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
         (__pyx_v_pPointer[__pyx_v_i]) = __pyx_t_16;
       }
 
-      /* "SelfPlay.pyx":73
+      /* "SelfPlay.pyx":74
+ *                 print(i)
  *                 pPointer[i] = pTemp[0][i]
- * 
+ *             print('setting: ' + str(isModelReadyPointer[0]))             # <<<<<<<<<<<<<<
+ *             isModelReadyPointer[0] = 1
+ *             print('set: ' + str(isModelReadyPointer[0]))
+ */
+      __pyx_t_2 = __Pyx_PyInt_From_int((__pyx_v_isModelReadyPointer[0])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 74, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      __pyx_t_1 = __Pyx_PyObject_CallOneArg(((PyObject *)(&PyString_Type)), __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 74, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+      __pyx_t_2 = PyNumber_Add(__pyx_kp_s_setting, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 74, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+      if (__Pyx_PrintOne(0, __pyx_t_2) < 0) __PYX_ERR(0, 74, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+
+      /* "SelfPlay.pyx":75
+ *                 pPointer[i] = pTemp[0][i]
+ *             print('setting: ' + str(isModelReadyPointer[0]))
  *             isModelReadyPointer[0] = 1             # <<<<<<<<<<<<<<
+ *             print('set: ' + str(isModelReadyPointer[0]))
+ * 
+ */
+      (__pyx_v_isModelReadyPointer[0]) = 1;
+
+      /* "SelfPlay.pyx":76
+ *             print('setting: ' + str(isModelReadyPointer[0]))
+ *             isModelReadyPointer[0] = 1
+ *             print('set: ' + str(isModelReadyPointer[0]))             # <<<<<<<<<<<<<<
  * 
  *         sleep(0.5)
  */
-      (__pyx_v_isModelReadyPointer[0]) = 1;
+      __pyx_t_2 = __Pyx_PyInt_From_int((__pyx_v_isModelReadyPointer[0])); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 76, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      __pyx_t_1 = __Pyx_PyObject_CallOneArg(((PyObject *)(&PyString_Type)), __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 76, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_1);
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+      __pyx_t_2 = PyNumber_Add(__pyx_kp_s_set, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 76, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+      if (__Pyx_PrintOne(0, __pyx_t_2) < 0) __PYX_ERR(0, 76, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
       /* "SelfPlay.pyx":62
  *     while selfPlayThread.is_alive():
@@ -2638,67 +2709,67 @@ static PyObject *__pyx_f_9SelfPlayC_selfPlay(CYTHON_UNUSED int __pyx_skip_dispat
  */
     }
 
-    /* "SelfPlay.pyx":75
- *             isModelReadyPointer[0] = 1
+    /* "SelfPlay.pyx":78
+ *             print('set: ' + str(isModelReadyPointer[0]))
  * 
  *         sleep(0.5)             # <<<<<<<<<<<<<<
  *     selfPlayThread.join()
  *     #free(gameStatePointer)
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_sleep); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 75, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
+    __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_sleep); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 78, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_1);
     __pyx_t_3 = NULL;
-    if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_2))) {
-      __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_2);
+    if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_1))) {
+      __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_1);
       if (likely(__pyx_t_3)) {
-        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
+        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_1);
         __Pyx_INCREF(__pyx_t_3);
         __Pyx_INCREF(function);
-        __Pyx_DECREF_SET(__pyx_t_2, function);
+        __Pyx_DECREF_SET(__pyx_t_1, function);
       }
     }
-    __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_3, __pyx_float_0_5) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_float_0_5);
+    __pyx_t_2 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_1, __pyx_t_3, __pyx_float_0_5) : __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_float_0_5);
     __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 75, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_1);
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 78, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   }
 
-  /* "SelfPlay.pyx":76
+  /* "SelfPlay.pyx":79
  * 
  *         sleep(0.5)
  *     selfPlayThread.join()             # <<<<<<<<<<<<<<
  *     #free(gameStatePointer)
  *     #free(vPointer)
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_selfPlayThread, __pyx_n_s_join); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 76, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_selfPlayThread, __pyx_n_s_join); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 79, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
   __pyx_t_3 = NULL;
-  if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_2))) {
-    __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_2);
+  if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_1))) {
+    __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_1);
     if (likely(__pyx_t_3)) {
-      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_1);
       __Pyx_INCREF(__pyx_t_3);
       __Pyx_INCREF(function);
-      __Pyx_DECREF_SET(__pyx_t_2, function);
+      __Pyx_DECREF_SET(__pyx_t_1, function);
     }
   }
-  __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_t_3) : __Pyx_PyObject_CallNoArg(__pyx_t_2);
+  __pyx_t_2 = (__pyx_t_3) ? __Pyx_PyObject_CallOneArg(__pyx_t_1, __pyx_t_3) : __Pyx_PyObject_CallNoArg(__pyx_t_1);
   __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 76, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_1);
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 79, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "SelfPlay.pyx":83
+  /* "SelfPlay.pyx":86
  *     #free(isModelReadyPointer)
  *     #free(errorPointer)
  *     print('Dunzo')             # <<<<<<<<<<<<<<
  * 
  * cdef callSelfPlayCython(np.ndarray[DTYPE_INT_t] gameStatePointer, np.ndarray[DTYPE_t] vPointer, np.ndarray[DTYPE_t] pPointer, np.ndarray[DTYPE_INT_t] isCReadyPointer, np.ndarray[DTYPE_INT_t] isModelReadyPointer, np.ndarray[DTYPE_INT_t] errorPointer):
  */
-  if (__Pyx_PrintOne(0, __pyx_n_s_Dunzo) < 0) __PYX_ERR(0, 83, __pyx_L1_error)
+  if (__Pyx_PrintOne(0, __pyx_n_s_Dunzo) < 0) __PYX_ERR(0, 86, __pyx_L1_error)
 
   /* "SelfPlay.pyx":26
  * 
@@ -2788,12 +2859,12 @@ static PyObject *__pyx_pf_9SelfPlayC_selfPlay(CYTHON_UNUSED PyObject *__pyx_self
   return __pyx_r;
 }
 
-/* "SelfPlay.pyx":85
+/* "SelfPlay.pyx":88
  *     print('Dunzo')
  * 
  * cdef callSelfPlayCython(np.ndarray[DTYPE_INT_t] gameStatePointer, np.ndarray[DTYPE_t] vPointer, np.ndarray[DTYPE_t] pPointer, np.ndarray[DTYPE_INT_t] isCReadyPointer, np.ndarray[DTYPE_INT_t] isModelReadyPointer, np.ndarray[DTYPE_INT_t] errorPointer):             # <<<<<<<<<<<<<<
+ *     print('Holaaaa')
  *     selfPlayCython(400, <int *>gameStatePointer.data, <double *>vPointer.data, <double *>pPointer.data, <int *>isCReadyPointer.data, <int *>isModelReadyPointer.data, <int *>errorPointer.data)
- * 
  */
 
 static PyObject *__pyx_f_9SelfPlayC_callSelfPlayCython(PyArrayObject *__pyx_v_gameStatePointer, PyArrayObject *__pyx_v_vPointer, PyArrayObject *__pyx_v_pPointer, PyArrayObject *__pyx_v_isCReadyPointer, PyArrayObject *__pyx_v_isModelReadyPointer, PyArrayObject *__pyx_v_errorPointer) {
@@ -2838,55 +2909,82 @@ static PyObject *__pyx_f_9SelfPlayC_callSelfPlayCython(PyArrayObject *__pyx_v_ga
   __pyx_pybuffernd_errorPointer.rcbuffer = &__pyx_pybuffer_errorPointer;
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_gameStatePointer.rcbuffer->pybuffer, (PyObject*)__pyx_v_gameStatePointer, &__Pyx_TypeInfo_nn___pyx_t_9SelfPlayC_DTYPE_INT_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 85, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_gameStatePointer.rcbuffer->pybuffer, (PyObject*)__pyx_v_gameStatePointer, &__Pyx_TypeInfo_nn___pyx_t_9SelfPlayC_DTYPE_INT_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 88, __pyx_L1_error)
   }
   __pyx_pybuffernd_gameStatePointer.diminfo[0].strides = __pyx_pybuffernd_gameStatePointer.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_gameStatePointer.diminfo[0].shape = __pyx_pybuffernd_gameStatePointer.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_vPointer.rcbuffer->pybuffer, (PyObject*)__pyx_v_vPointer, &__Pyx_TypeInfo_nn___pyx_t_9SelfPlayC_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 85, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_vPointer.rcbuffer->pybuffer, (PyObject*)__pyx_v_vPointer, &__Pyx_TypeInfo_nn___pyx_t_9SelfPlayC_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 88, __pyx_L1_error)
   }
   __pyx_pybuffernd_vPointer.diminfo[0].strides = __pyx_pybuffernd_vPointer.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_vPointer.diminfo[0].shape = __pyx_pybuffernd_vPointer.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_pPointer.rcbuffer->pybuffer, (PyObject*)__pyx_v_pPointer, &__Pyx_TypeInfo_nn___pyx_t_9SelfPlayC_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 85, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_pPointer.rcbuffer->pybuffer, (PyObject*)__pyx_v_pPointer, &__Pyx_TypeInfo_nn___pyx_t_9SelfPlayC_DTYPE_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 88, __pyx_L1_error)
   }
   __pyx_pybuffernd_pPointer.diminfo[0].strides = __pyx_pybuffernd_pPointer.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_pPointer.diminfo[0].shape = __pyx_pybuffernd_pPointer.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_isCReadyPointer.rcbuffer->pybuffer, (PyObject*)__pyx_v_isCReadyPointer, &__Pyx_TypeInfo_nn___pyx_t_9SelfPlayC_DTYPE_INT_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 85, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_isCReadyPointer.rcbuffer->pybuffer, (PyObject*)__pyx_v_isCReadyPointer, &__Pyx_TypeInfo_nn___pyx_t_9SelfPlayC_DTYPE_INT_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 88, __pyx_L1_error)
   }
   __pyx_pybuffernd_isCReadyPointer.diminfo[0].strides = __pyx_pybuffernd_isCReadyPointer.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_isCReadyPointer.diminfo[0].shape = __pyx_pybuffernd_isCReadyPointer.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_isModelReadyPointer.rcbuffer->pybuffer, (PyObject*)__pyx_v_isModelReadyPointer, &__Pyx_TypeInfo_nn___pyx_t_9SelfPlayC_DTYPE_INT_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 85, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_isModelReadyPointer.rcbuffer->pybuffer, (PyObject*)__pyx_v_isModelReadyPointer, &__Pyx_TypeInfo_nn___pyx_t_9SelfPlayC_DTYPE_INT_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 88, __pyx_L1_error)
   }
   __pyx_pybuffernd_isModelReadyPointer.diminfo[0].strides = __pyx_pybuffernd_isModelReadyPointer.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_isModelReadyPointer.diminfo[0].shape = __pyx_pybuffernd_isModelReadyPointer.rcbuffer->pybuffer.shape[0];
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_errorPointer.rcbuffer->pybuffer, (PyObject*)__pyx_v_errorPointer, &__Pyx_TypeInfo_nn___pyx_t_9SelfPlayC_DTYPE_INT_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 85, __pyx_L1_error)
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_errorPointer.rcbuffer->pybuffer, (PyObject*)__pyx_v_errorPointer, &__Pyx_TypeInfo_nn___pyx_t_9SelfPlayC_DTYPE_INT_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) __PYX_ERR(0, 88, __pyx_L1_error)
   }
   __pyx_pybuffernd_errorPointer.diminfo[0].strides = __pyx_pybuffernd_errorPointer.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_errorPointer.diminfo[0].shape = __pyx_pybuffernd_errorPointer.rcbuffer->pybuffer.shape[0];
 
-  /* "SelfPlay.pyx":86
+  /* "SelfPlay.pyx":89
  * 
  * cdef callSelfPlayCython(np.ndarray[DTYPE_INT_t] gameStatePointer, np.ndarray[DTYPE_t] vPointer, np.ndarray[DTYPE_t] pPointer, np.ndarray[DTYPE_INT_t] isCReadyPointer, np.ndarray[DTYPE_INT_t] isModelReadyPointer, np.ndarray[DTYPE_INT_t] errorPointer):
+ *     print('Holaaaa')             # <<<<<<<<<<<<<<
+ *     selfPlayCython(400, <int *>gameStatePointer.data, <double *>vPointer.data, <double *>pPointer.data, <int *>isCReadyPointer.data, <int *>isModelReadyPointer.data, <int *>errorPointer.data)
+ *     print('Dunzaaaaa')
+ */
+  if (__Pyx_PrintOne(0, __pyx_n_s_Holaaaa) < 0) __PYX_ERR(0, 89, __pyx_L1_error)
+
+  /* "SelfPlay.pyx":90
+ * cdef callSelfPlayCython(np.ndarray[DTYPE_INT_t] gameStatePointer, np.ndarray[DTYPE_t] vPointer, np.ndarray[DTYPE_t] pPointer, np.ndarray[DTYPE_INT_t] isCReadyPointer, np.ndarray[DTYPE_INT_t] isModelReadyPointer, np.ndarray[DTYPE_INT_t] errorPointer):
+ *     print('Holaaaa')
  *     selfPlayCython(400, <int *>gameStatePointer.data, <double *>vPointer.data, <double *>pPointer.data, <int *>isCReadyPointer.data, <int *>isModelReadyPointer.data, <int *>errorPointer.data)             # <<<<<<<<<<<<<<
- * 
- * cdef threadTest(int a):
+ *     print('Dunzaaaaa')
+ *     return
  */
   selfPlayCython(0x190, ((int *)__pyx_v_gameStatePointer->data), ((double *)__pyx_v_vPointer->data), ((double *)__pyx_v_pPointer->data), ((int *)__pyx_v_isCReadyPointer->data), ((int *)__pyx_v_isModelReadyPointer->data), ((int *)__pyx_v_errorPointer->data));
 
-  /* "SelfPlay.pyx":85
+  /* "SelfPlay.pyx":91
+ *     print('Holaaaa')
+ *     selfPlayCython(400, <int *>gameStatePointer.data, <double *>vPointer.data, <double *>pPointer.data, <int *>isCReadyPointer.data, <int *>isModelReadyPointer.data, <int *>errorPointer.data)
+ *     print('Dunzaaaaa')             # <<<<<<<<<<<<<<
+ *     return
+ * 
+ */
+  if (__Pyx_PrintOne(0, __pyx_n_s_Dunzaaaaa) < 0) __PYX_ERR(0, 91, __pyx_L1_error)
+
+  /* "SelfPlay.pyx":92
+ *     selfPlayCython(400, <int *>gameStatePointer.data, <double *>vPointer.data, <double *>pPointer.data, <int *>isCReadyPointer.data, <int *>isModelReadyPointer.data, <int *>errorPointer.data)
+ *     print('Dunzaaaaa')
+ *     return             # <<<<<<<<<<<<<<
+ * 
+ * cdef threadTest(int a):
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_r = Py_None; __Pyx_INCREF(Py_None);
+  goto __pyx_L0;
+
+  /* "SelfPlay.pyx":88
  *     print('Dunzo')
  * 
  * cdef callSelfPlayCython(np.ndarray[DTYPE_INT_t] gameStatePointer, np.ndarray[DTYPE_t] vPointer, np.ndarray[DTYPE_t] pPointer, np.ndarray[DTYPE_INT_t] isCReadyPointer, np.ndarray[DTYPE_INT_t] isModelReadyPointer, np.ndarray[DTYPE_INT_t] errorPointer):             # <<<<<<<<<<<<<<
+ *     print('Holaaaa')
  *     selfPlayCython(400, <int *>gameStatePointer.data, <double *>vPointer.data, <double *>pPointer.data, <int *>isCReadyPointer.data, <int *>isModelReadyPointer.data, <int *>errorPointer.data)
- * 
  */
 
   /* function exit code */
-  __pyx_r = Py_None; __Pyx_INCREF(Py_None);
-  goto __pyx_L0;
   __pyx_L1_error:;
   { PyObject *__pyx_type, *__pyx_value, *__pyx_tb;
     __Pyx_PyThreadState_declare
@@ -2915,8 +3013,8 @@ static PyObject *__pyx_f_9SelfPlayC_callSelfPlayCython(PyArrayObject *__pyx_v_ga
   return __pyx_r;
 }
 
-/* "SelfPlay.pyx":88
- *     selfPlayCython(400, <int *>gameStatePointer.data, <double *>vPointer.data, <double *>pPointer.data, <int *>isCReadyPointer.data, <int *>isModelReadyPointer.data, <int *>errorPointer.data)
+/* "SelfPlay.pyx":94
+ *     return
  * 
  * cdef threadTest(int a):             # <<<<<<<<<<<<<<
  *     while True:
@@ -2931,7 +3029,7 @@ static PyObject *__pyx_f_9SelfPlayC_threadTest(CYTHON_UNUSED int __pyx_v_a) {
   PyObject *__pyx_t_3 = NULL;
   __Pyx_RefNannySetupContext("threadTest", 0);
 
-  /* "SelfPlay.pyx":89
+  /* "SelfPlay.pyx":95
  * 
  * cdef threadTest(int a):
  *     while True:             # <<<<<<<<<<<<<<
@@ -2940,20 +3038,20 @@ static PyObject *__pyx_f_9SelfPlayC_threadTest(CYTHON_UNUSED int __pyx_v_a) {
  */
   while (1) {
 
-    /* "SelfPlay.pyx":90
+    /* "SelfPlay.pyx":96
  * cdef threadTest(int a):
  *     while True:
  *         print('testworks')             # <<<<<<<<<<<<<<
  *         sleep(1)
  */
-    if (__Pyx_PrintOne(0, __pyx_n_s_testworks) < 0) __PYX_ERR(0, 90, __pyx_L1_error)
+    if (__Pyx_PrintOne(0, __pyx_n_s_testworks) < 0) __PYX_ERR(0, 96, __pyx_L1_error)
 
-    /* "SelfPlay.pyx":91
+    /* "SelfPlay.pyx":97
  *     while True:
  *         print('testworks')
  *         sleep(1)             # <<<<<<<<<<<<<<
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_sleep); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 91, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_sleep); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 97, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_2);
     __pyx_t_3 = NULL;
     if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_2))) {
@@ -2967,14 +3065,14 @@ static PyObject *__pyx_f_9SelfPlayC_threadTest(CYTHON_UNUSED int __pyx_v_a) {
     }
     __pyx_t_1 = (__pyx_t_3) ? __Pyx_PyObject_Call2Args(__pyx_t_2, __pyx_t_3, __pyx_int_1) : __Pyx_PyObject_CallOneArg(__pyx_t_2, __pyx_int_1);
     __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 91, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 97, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "SelfPlay.pyx":88
- *     selfPlayCython(400, <int *>gameStatePointer.data, <double *>vPointer.data, <double *>pPointer.data, <int *>isCReadyPointer.data, <int *>isModelReadyPointer.data, <int *>errorPointer.data)
+  /* "SelfPlay.pyx":94
+ *     return
  * 
  * cdef threadTest(int a):             # <<<<<<<<<<<<<<
  *     while True:
@@ -5783,9 +5881,11 @@ static struct PyModuleDef __pyx_moduledef = {
 static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_DTYPE, __pyx_k_DTYPE, sizeof(__pyx_k_DTYPE), 0, 0, 1, 1},
   {&__pyx_n_s_DTYPE_INT, __pyx_k_DTYPE_INT, sizeof(__pyx_k_DTYPE_INT), 0, 0, 1, 1},
+  {&__pyx_n_s_Dunzaaaaa, __pyx_k_Dunzaaaaa, sizeof(__pyx_k_Dunzaaaaa), 0, 0, 1, 1},
   {&__pyx_n_s_Dunzo, __pyx_k_Dunzo, sizeof(__pyx_k_Dunzo), 0, 0, 1, 1},
   {&__pyx_kp_u_Format_string_allocated_too_shor, __pyx_k_Format_string_allocated_too_shor, sizeof(__pyx_k_Format_string_allocated_too_shor), 0, 1, 0, 0},
   {&__pyx_kp_u_Format_string_allocated_too_shor_2, __pyx_k_Format_string_allocated_too_shor_2, sizeof(__pyx_k_Format_string_allocated_too_shor_2), 0, 1, 0, 0},
+  {&__pyx_n_s_Holaaaa, __pyx_k_Holaaaa, sizeof(__pyx_k_Holaaaa), 0, 0, 1, 1},
   {&__pyx_n_s_ImportError, __pyx_k_ImportError, sizeof(__pyx_k_ImportError), 0, 0, 1, 1},
   {&__pyx_kp_u_Non_native_byte_order_not_suppor, __pyx_k_Non_native_byte_order_not_suppor, sizeof(__pyx_k_Non_native_byte_order_not_suppor), 0, 1, 0, 0},
   {&__pyx_n_s_PreStart, __pyx_k_PreStart, sizeof(__pyx_k_PreStart), 0, 0, 1, 1},
@@ -5821,6 +5921,8 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_print, __pyx_k_print, sizeof(__pyx_k_print), 0, 0, 1, 1},
   {&__pyx_n_s_random, __pyx_k_random, sizeof(__pyx_k_random), 0, 0, 1, 1},
   {&__pyx_n_s_range, __pyx_k_range, sizeof(__pyx_k_range), 0, 0, 1, 1},
+  {&__pyx_kp_s_set, __pyx_k_set, sizeof(__pyx_k_set), 0, 0, 1, 0},
+  {&__pyx_kp_s_setting, __pyx_k_setting, sizeof(__pyx_k_setting), 0, 0, 1, 0},
   {&__pyx_n_s_sleep, __pyx_k_sleep, sizeof(__pyx_k_sleep), 0, 0, 1, 1},
   {&__pyx_n_s_start, __pyx_k_start, sizeof(__pyx_k_start), 0, 0, 1, 1},
   {&__pyx_kp_s_stringsource, __pyx_k_stringsource, sizeof(__pyx_k_stringsource), 0, 0, 1, 0},

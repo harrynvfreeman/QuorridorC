@@ -20,11 +20,13 @@ void searchCython(int numSimulations, Tree * tree, int * gameState, double * v,
 		memcpy(gameState, node->state->gameState, NUM_ROWS*NUM_COLS*NUM_CHANNELS*sizeof(int));
 		*(isCReady) = 1;
 		//printf("here C \n");
-		Py_BEGIN_ALLOW_THREADS
+		//Py_BEGIN_ALLOW_THREADS
 		while (*(isModelReady) == 0) {
+			//Py_BEGIN_ALLOW_THREADS
 			sleep(1);
+			//Py_END_ALLOW_THREADS
 		}
-		Py_END_ALLOW_THREADS
+		//Py_END_ALLOW_THREADS
 		//printf("Dunzo C \n");
 		expandAndEvaluate(node, p);
 		backup(node, *v);
@@ -52,6 +54,7 @@ void search(int numSimulations, Tree * tree) {
 
 void selfPlayCython(int numSimulations, int * gameState, double * v, double * p, 
 					int * isCReady, int * isModelReady, int * error) {
+	Py_BEGIN_ALLOW_THREADS
 	//printf("Starting \n");
 	*(error) = 0;
 	QE * qe = resetQE();
@@ -87,9 +90,8 @@ void selfPlayCython(int numSimulations, int * gameState, double * v, double * p,
 // 	printf("c \n");
 // 	free(tree);
 // 	printf("d \n");
-	printf("Ending \n");
-	
-	return;
+	printf("Endo \n");
+	Py_END_ALLOW_THREADS
 }
 
 

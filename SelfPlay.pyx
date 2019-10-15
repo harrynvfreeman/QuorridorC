@@ -68,9 +68,12 @@ cpdef selfPlay():
             vPointer[0] = vTemp[0][0]
             
             for i in range(NUM_MOVES):
+                print(pTemp[0][i])
+                print(i)
                 pPointer[i] = pTemp[0][i]
-            
+            print('setting: ' + str(isModelReadyPointer[0]))
             isModelReadyPointer[0] = 1
+            print('set: ' + str(isModelReadyPointer[0]))
         
         sleep(0.5)
     selfPlayThread.join()
@@ -83,7 +86,10 @@ cpdef selfPlay():
     print('Dunzo')
     
 cdef callSelfPlayCython(np.ndarray[DTYPE_INT_t] gameStatePointer, np.ndarray[DTYPE_t] vPointer, np.ndarray[DTYPE_t] pPointer, np.ndarray[DTYPE_INT_t] isCReadyPointer, np.ndarray[DTYPE_INT_t] isModelReadyPointer, np.ndarray[DTYPE_INT_t] errorPointer):
+    print('Holaaaa')
     selfPlayCython(400, <int *>gameStatePointer.data, <double *>vPointer.data, <double *>pPointer.data, <int *>isCReadyPointer.data, <int *>isModelReadyPointer.data, <int *>errorPointer.data)     
+    print('Dunzaaaaa')
+    return
     
 cdef threadTest(int a):
     while True:
