@@ -146,6 +146,7 @@ Node * createChild(Node * parent, QE * state, int move, double p);
 Node * selectMCTS(Node * rootNode);
 void expandAndEvaluate(Node * node, double * p);
 void backup(Node * origNode, double v);
+void backupCython(Node * origNode, double * v);
 void clearNode(Node * node);
 void clearNodeSingle(Node * node);
 void play(Tree * tree);
@@ -155,5 +156,7 @@ void search(int numSimulations, Tree * tree);
 void selfPlay(int numSimulations, Tree * tree);
 void searchCython(int numSimulations, Tree * tree, int * gameState, double * v, double * p, int * isCReady, int * isModelReady, int * error);
 void selfPlayCython(int numSimulations, int * gameState, double * v, double * p, int * isCReady, int * isModelReady, int * error);
+
+void cFunctionWorking(int threadNum, int * val, int * wait);
 
 #endif

@@ -137,18 +137,28 @@ QE * cloneQE(QE * cloneFrom) {
 
 void clearQE(QE * qe) {
 	free(qe->playerA);
+	qe->playerA = NULL;
 	free(qe->playerB);
+	qe->playerB = NULL;
 	clearBoard(qe->board);
 	free(qe->availBlockVertPlace);
+	qe->availBlockVertPlace = NULL;
 	free(qe->availBlockHorizPlace);
+	qe->availBlockHorizPlace = NULL;
 	free(qe->placedVertBlocks);
+	qe->placedVertBlocks = NULL;
 	free(qe->placedHorizBlocks);
+	qe->placedHorizBlocks = NULL;
 	free(qe->hash);
+	qe->hash = NULL;
 	empty(qe->pastStates);
 	free(qe->pastStates);
+	qe->pastStates = NULL;
 	free(qe->gameState);
+	qe->gameState = NULL;
 	
 	free(qe);
+	qe = NULL;
 }
 
 Tile *** initBoard() {
@@ -185,11 +195,14 @@ void clearBoard(Tile *** board) {
 		for (int j = 0; j < BOARD_WIDTH; j++) {
 			Tile * tile = board[i][j];
 			free(tile);
+			tile = NULL;
 		}
 		free(*(board + i));
+		*(board + i) = NULL;
 	}
 	
 	free(board);
+	board = NULL;
 }
 
 void initAvailBlockPlace(int * availBlockVertPlace, int * availBlockHorizPlace) {

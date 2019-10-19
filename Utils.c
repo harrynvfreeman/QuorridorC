@@ -1,4 +1,6 @@
+//#include "Python.h"
 #include "Structs.h"
+#include <time.h>
 
 int posToValTile(int yPos, int xPos, int boardWidth) {
 	return xPos + yPos * boardWidth;
@@ -34,3 +36,12 @@ int posToValHorizBlock(int y0, int x0, int boardHeight) {
 int xyzToVal(int rows, int cols, int z, int y, int x) {
 	return x + y*cols + z*rows*cols;
 }
+
+// void mySleep() {
+// 	struct timespec tm1,tm2;
+// 	tm1.tv_sec = 0;                                                            
+//     tm1.tv_nsec = 1000000; 
+// 	nanosleep(&tm1,&tm2);
+// }
+
+

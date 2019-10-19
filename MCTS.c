@@ -44,8 +44,11 @@ void clearNode(Node * node) {
 	}
 	
 	free(node->children);
+	node->children = NULL;
 	
+	node->parent = NULL;
 	free(node);
+	node = NULL;
 }
 
 void clearNodeSingle(Node * node) {
@@ -53,8 +56,11 @@ void clearNodeSingle(Node * node) {
 	clearQE(node->state);
 	
 	free(node->children);
+	node->children = NULL;
 	
+	node->parent = NULL;
 	free(node);
+	node = NULL;
 }
 
 
@@ -197,6 +203,19 @@ void backup(Node * origNode, double v) {
 	while(node->hasParent == 1) {
 		node->vLoss = node->vLoss - 1;
 		node->W = node->W + v;
+		node->Q = (node->W - node->vLoss) / (node->N);
+		node = node->parent;
+	}
+	
+	//for the parent
+	node->N = node->N+1;
+}
+
+void backupCython(Node * origNode, double * v) {
+	Node * node = origNode;
+	while(node->hasParent == 1) {
+		node->vLoss = node->vLoss - 1;
+		node->W = node->W + *v;
 		node->Q = (node->W - node->vLoss) / (node->N);
 		node = node->parent;
 	}
