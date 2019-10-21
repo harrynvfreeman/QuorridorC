@@ -90,7 +90,7 @@ cpdef selfPlay():
     modelInput = np.zeros((BATCH_SIZE, NUM_ROWS, NUM_COLS, NUM_CHANNELS))
     while(threadA.is_alive()):
         if isCReadyPointer[0] == 1:
-            modelInput[0] = np.transpose(np.reshape(gameState, [BATCH_SIZE, NUM_CHANNELS, NUM_ROWS, NUM_COLS]), (0, 2, 3, 1))
+            modelInput = np.transpose(np.reshape(gameState, [BATCH_SIZE, NUM_CHANNELS, NUM_ROWS, NUM_COLS]), (0, 2, 3, 1))
             modelOut = model.predict(modelInput)
             v_model = modelOut[0].astype('d')
             p_model = modelOut[1].astype('d')
