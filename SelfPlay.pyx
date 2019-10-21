@@ -76,7 +76,7 @@ cpdef selfPlay():
     piOutPointer = <double*>piOut.data
     errorPointer = <int *> error.data
     
-    threadA = threading.Thread(target=runSelfPlayC, args=(4, gameState, v, p, isCReady, isModelReady, numTurns, gameStateOut, vOut, piOut, error))
+    threadA = threading.Thread(target=runSelfPlayC, args=(400, gameState, v, p, isCReady, isModelReady, numTurns, gameStateOut, vOut, piOut, error))
     
     threadA.start()
     
