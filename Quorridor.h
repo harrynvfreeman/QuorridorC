@@ -16,6 +16,7 @@ extern const int NUM_ROWS;
 extern const int NUM_COLS;
 extern const int NUM_MOVES;
 extern const int MAX_TURNS;
+extern const int BATCH_SIZE;
 
 extern const int hash_size;
 

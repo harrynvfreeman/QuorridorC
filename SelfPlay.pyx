@@ -30,6 +30,7 @@ cdef extern from "Quorridor.h":
     int NUM_ROWS
     int NUM_COLS
     int MAX_TURNS
+    int BATCH_SIZE
     
 cpdef selfPlay():
     model = load_model('./models/model.h5', custom_objects={'softmax_cross_entropy_with_logits': softmax_cross_entropy_with_logits})
@@ -55,9 +56,9 @@ cpdef selfPlay():
     cdef double * piOutPointer
     cdef int * errorPointer
     
-    gameState = np.zeros((NUM_CHANNELS*NUM_ROWS*NUM_COLS), dtype=DTYPE_INT)
-    v = np.zeros((1), dtype=DTYPE)
-    p = np.zeros((NUM_MOVES), dtype=DTYPE)
+    gameState = np.zeros((BATCH_SIZE*NUM_CHANNELS*NUM_ROWS*NUM_COLS), dtype=DTYPE_INT)
+    v = np.zeros((BATCH_SIZE), dtype=DTYPE)
+    p = np.zeros((BATCH_SIZE*NUM_MOVES), dtype=DTYPE)
     isCReady = np.zeros((1), dtype=DTYPE_INT)
     isModelReady = np.zeros((1), dtype=DTYPE_INT)
     numTurns = np.zeros((1), dtype=DTYPE_INT)
@@ -89,7 +90,7 @@ cpdef selfPlay():
     modelInput = np.zeros((1, NUM_ROWS, NUM_COLS, NUM_CHANNELS))
     while(threadA.is_alive()):
         if isCReadyPointer[0] == 1:
-            modelInput[0] = np.transpose(np.reshape(gameState, [NUM_CHANNELS, NUM_ROWS, NUM_COLS]), (1, 2, 0))
+            modelInput[0] = np.transpose(np.reshape(gameState, [BATCH_SIZE, NUM_CHANNELS, NUM_ROWS, NUM_COLS]), (0, 2, 3, 1))
             modelOut = model.predict(modelInput)
             v_model = modelOut[0].astype('d')
             p_model = modelOut[1].astype('d')

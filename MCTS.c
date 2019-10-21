@@ -159,7 +159,7 @@ void play(Tree * tree) {
 	int finalIndex = -1;	
 // 	printf("Node N is: %f \n", node->N);
 // 	printf("Node children is: %d \n", node->numChildren);
-// 	printf("Child N's are: ");
+ 	printf("Child N's are: ");
 	for (int index = 0; index < node->numChildren; index++) {
 		Node * child = *(node->children + index);
 		printf("%f, ", child->N);
@@ -173,13 +173,13 @@ void play(Tree * tree) {
 			}
 		}
 	}
-// 	printf("\n");
-// 	printf("PiSum is: %f \n", piSum);
-// 	printf("Pi is: ");
-// 	for (int i = 0; i < NUM_MOVES; i++) {
-// 		printf("%f, ", *(node->pi + i));
-// 	}
-// 	printf("\n");
+ 	printf("\n");
+ 	printf("PiSum is: %f \n", piSum);
+ 	printf("Pi is: ");
+ 	for (int i = 0; i < NUM_MOVES; i++) {
+ 		printf("%f, ", *(node->pi + i));
+ 	}
+ 	printf("\n");
 	
 	if (finalIndex == -1) {
 		finalIndex = node->numChildren - 1;

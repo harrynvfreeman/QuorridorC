@@ -15,9 +15,13 @@ void searchCython(int numSimulations, Tree * tree, int * gameState, double * v,
 	Node * node;
 	double * vCopy = (double*)malloc(sizeof(double));
 	double * pCopy = (double*)malloc(NUM_MOVES*sizeof(double));
-	for (int i = 0; i < numSimulations; i++) {
-		node = selectMCTS(tree->rootNode);
-		memcpy(gameState, node->state->gameState, NUM_ROWS*NUM_COLS*NUM_CHANNELS*sizeof(int));
+	int i = 0;
+	int safety = 0;
+	while (i < numSimulations && safety < 1000) {
+		for (int b = 0; b < BATCH_SIZE; b++) {
+			node = selectMCTS(tree->rootNode);
+			memcpy(gameState + b*NUM_CHANNELS*NUM_ROWS*NUM_COLS, node->state->gameState, NUM_ROWS*NUM_COLS*NUM_CHANNELS*sizeof(int));
+		}
 		*(isModelReady) = 0;
 		*(isCReady) = 1;
 		while (*(isModelReady) == 0) {
@@ -26,10 +30,20 @@ void searchCython(int numSimulations, Tree * tree, int * gameState, double * v,
 			nanosleep(&tm1,&tm2);
 			//Py_END_ALLOW_THREADS MAY NEED THIS
 		}
-		memcpy(vCopy, v, sizeof(double));
-		memcpy(pCopy, p, NUM_MOVES*sizeof(double));
-		expandAndEvaluate(node, pCopy);
-		backupCython(node, vCopy);
+		
+		//end states can be hit twice, not sure how I feel about that
+		for (int b = 0; b < BATCH_SIZE; b++) {
+			if (node->numChildren == 0) {
+				memcpy(vCopy, v + b, sizeof(double));
+				memcpy(pCopy, p + b*NUM_MOVES, NUM_MOVES*sizeof(double));
+				expandAndEvaluate(node, pCopy);
+				i = i + 1;
+			} else {
+				*vCopy = 0;
+			}
+			backupCython(node, vCopy);
+			safety = safety + 1;
+		}
 	}
 	free(vCopy);
 	vCopy = NULL;
@@ -86,7 +100,7 @@ void selfPlayCython(int numSimulations, int * gameState, double * v, double * p,
 
 	int stopper = 0;
 	while(tree->rootNode->state->isGameOver == 0 && stopper < 500) {
-		//render(tree->rootNode->state, 1);
+		render(tree->rootNode->state, 1);
 		searchCython(numSimulations, tree, gameState, v, p, isCReady, isModelReady, error);
 		play(tree);
 		stopper = stopper + 1;
