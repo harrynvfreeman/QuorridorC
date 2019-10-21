@@ -93,7 +93,7 @@ cpdef selfPlay():
             modelInput = np.transpose(np.reshape(gameState, [BATCH_SIZE, NUM_CHANNELS, NUM_ROWS, NUM_COLS]), (0, 2, 3, 1))
             modelOut = model.predict(modelInput)
             v_model = modelOut[0].astype('d')
-            p_model = modelOut[1].astype('d')
+            p_model = modelOut[1].astype('d').flatten()
             v[:] = v_model[:, 0]
             p[:] = p_model[:]
             #p[:] = p_mid[:]
