@@ -87,7 +87,7 @@ cpdef selfPlay():
     cdef np.ndarray[DTYPE_t] p_mid
     cdef np.ndarray[DTYPE_t] v_mid
     
-    modelInput = np.zeros((1, NUM_ROWS, NUM_COLS, NUM_CHANNELS))
+    modelInput = np.zeros((BATCH_SIZE, NUM_ROWS, NUM_COLS, NUM_CHANNELS))
     while(threadA.is_alive()):
         if isCReadyPointer[0] == 1:
             modelInput[0] = np.transpose(np.reshape(gameState, [BATCH_SIZE, NUM_CHANNELS, NUM_ROWS, NUM_COLS]), (0, 2, 3, 1))
