@@ -94,8 +94,8 @@ cpdef selfPlay():
             modelOut = model.predict(modelInput)
             v_model = modelOut[0].astype('d')
             p_model = modelOut[1].astype('d')
-            v[:] = v_model[0][:]
-            p[:] = p_model[0][:]
+            v[:] = v_model[:]
+            p[:] = p_model[:]
             #p[:] = p_mid[:]
             isCReadyPointer[0] = 0
             isModelReadyPointer[0] = 1
