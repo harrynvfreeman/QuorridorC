@@ -5,51 +5,57 @@ from glob import glob
 from shutil import move
 from os import mkdir, rmdir
 from os.path import basename
-from SavedState import SavedState, readSavedState
+from SavedState import SavedState, readSavedState, VersionDescriptor, writeSavedState
 import numpy as np
-import schedule
 
-def train(modelName):
-    timeStamp, numFiles = moveFilesForProcessing(modelName)
+def train():
+    
+    versionDescriptor = readSavedState("./models/version")
+    version = versionDescriptor.version
+    
+    timeStamp, numFiles = moveFilesForProcessing(version)
     
     if numFiles == 0:
         rmdir(timeStamp)
         return
     
-    gameStates = np.zeros((numFiles, 9, 9, 65))
+    gameStates = np.zeros((numFiles, 17, 17, 29))
     pis = np.zeros((numFiles, 140))
     values = np.zeros((numFiles, 1))
     count = 0
-    for file in glob('./' + timeStamp + '/' + modelName + '*'):
+    for file in glob('./' + timeStamp + '/position*'):
         savedState = readSavedState(file)
         gameStates[count] = savedState.gameState
         pis[count] = savedState.pi
         values[count] = savedState.value
     
     y = {'valueHead' : values, 'policyHead': pis}
-    model = load_model('./models/' + modelName + '.h5', custom_objects={'softmax_cross_entropy_with_logits': softmax_cross_entropy_with_logits})
-    model.save('./depModels/' + modelName + '-' + datetime.now().strftime("%d-%b-%Y-%H-%M-%S-%f") + '.h5')
+    model = load_model('./models/model.h5', custom_objects={'softmax_cross_entropy_with_logits': softmax_cross_entropy_with_logits})
+    #NOT Doing model.save('./depModels/' + modelName + '-' + datetime.now().strftime("%d-%b-%Y-%H-%M-%S-%f") + '.h5')
     
     model.fit(gameStates, y, batch_size=32, epochs=1)
-    model.save('./models/' + modelName + '.h5')
     
-    moveFilesDoneProcessing(timeStamp)
+    model.save('./models/model.h5')
+    newVersion = version + 1
+    newVersionDescriptor = VersionDescriptor(newVersion)
+    writeSavedState(newVersionDescriptor, './models/version')
     
-def moveFilesForProcessing(modelName):
-    timeStamp = datetime.now().strftime("%d-%b-%Y-%H-%M-%S-%f") + '-' + modelName
+    moveFilesDoneProcessing(timeStamp, version)
+    
+def moveFilesForProcessing(version):
+    timeStamp = './positionsBeingProcessed-' + str(version) + "-" + datetime.now().strftime("%d-%b-%Y-%H-%M-%S-%f")
     mkdir(timeStamp)
     numFiles = 0
-    for f in glob('./positions/' + modelName + '*'):
-        tempFolder = datetime.now().strftime("%d-%b-%Y-%H-%M-%S-%f")
-        move(f, timeStamp + '/' + basename(f))
+    for f in glob('./positionsToBeProcessed/position*'):
+        move(f, "./" + timeStamp + '/' + basename(f))
         numFiles = numFiles + 1
         
     return timeStamp, numFiles
 
-def moveFilesDoneProcessing(timeStamp):
-    mkdir('processed/' + timeStamp)
-    for f in glob('./' + timeStamp + '/*'):
-        move(f, 'processed/' + timeStamp + '/' + basename(f))
+def moveFilesDoneProcessing(timeStamp, version):
+    mkdir('./positionsProcessed/' + str(version))
+    for f in glob('./' + timeStamp + '/position*'):
+        move(f, './positionsProcessed/' + str(version) + "/" + basename(f))
     rmdir(timeStamp)
     
 def constTrain():

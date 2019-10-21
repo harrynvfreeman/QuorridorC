@@ -7,9 +7,6 @@
 #include <unistd.h> 
 #include <time.h>
 
-//v is size 1
-//p is size numThreads*NUM_MOVES*1
-//assumes isCReady is 1
 void searchCython(int numSimulations, Tree * tree, int * gameState, double * v, 
 					double * p, int * isCReady, int * isModelReady, int * error) {
 	struct timespec tm1,tm2;
@@ -20,9 +17,6 @@ void searchCython(int numSimulations, Tree * tree, int * gameState, double * v,
 	double * pCopy = (double*)malloc(NUM_MOVES*sizeof(double));
 	for (int i = 0; i < numSimulations; i++) {
 		node = selectMCTS(tree->rootNode);
-		//printf("I could selectd %d \n", i);
-		//printf("model is: %d \n", isModelReady);
-		//fflush(stdout);
 		memcpy(gameState, node->state->gameState, NUM_ROWS*NUM_COLS*NUM_CHANNELS*sizeof(int));
 		*(isModelReady) = 0;
 		*(isCReady) = 1;
@@ -37,7 +31,6 @@ void searchCython(int numSimulations, Tree * tree, int * gameState, double * v,
 		expandAndEvaluate(node, pCopy);
 		backupCython(node, vCopy);
 	}
-	//printf("Done cython searching \n");
 	free(vCopy);
 	vCopy = NULL;
 	free(pCopy);
@@ -80,7 +73,10 @@ void cFunctionWorking(int threadNum, int * val, int * wait) {
 }
 
 void selfPlayCython(int numSimulations, int * gameState, double * v, double * p, 
-					int * isCReady, int * isModelReady, int * error) {
+					int * isCReady, int * isModelReady, 
+					int * numTurns, int * gameStateOut, double * vOut, double * piOut,
+					int * error) {
+	//srand(time(NULL));
 	//May not want line directly below
 	Py_BEGIN_ALLOW_THREADS
 	*(error) = 0;
@@ -90,38 +86,48 @@ void selfPlayCython(int numSimulations, int * gameState, double * v, double * p,
 
 	int stopper = 0;
 	while(tree->rootNode->state->isGameOver == 0 && stopper < 500) {
-// 		printf("Num sims is: %d \n", numSimulations);
-// 		printf("gameState is is: %d, %d, %d \n", *(gameState), *(gameState + 1), *(gameState + 2));
-// 		printf("v is: %f \n", *(v));
-// 		printf("p is: %f, %f, %f \n", *(p), *(p+1), *(p+2));
-// 		printf("cReady is: %d \n", *(isCReady));
-// 		printf("Model Ready is: %d \n", *(isModelReady));
-		//printf("Rend \n");
-		render(tree->rootNode->state, 1);
+		//render(tree->rootNode->state, 1);
 		searchCython(numSimulations, tree, gameState, v, p, isCReady, isModelReady, error);
 		play(tree);
 		stopper = stopper + 1;
 	}	
-	printf("Bend \n");
+	
 	render(tree->rootNode->state, 1);
 	if (stopper >= 500) {
-		printf("SOMETHING WENT WRONG GAME KEPT GOING");
+		printf("SOMETHING WENT WRONG UH OH");
 		*(error) = 1;
 	}
 	
+	*numTurns = tree->rootNode->state->turnNum;
+	
+	int count = tree->rootNode->state->turnNum - 1;
+	int winner = tree->rootNode->state->winner;
 	Node * node = tree->rootNode;
 	Node * temp;
 	while(node->parent != NULL) {
 		temp = node->parent;
 		clearNodeSingle(node);
 		node = temp;
+		
+		memcpy(gameStateOut + count*NUM_CHANNELS*NUM_ROWS*NUM_COLS, node->state->gameState, 
+				NUM_CHANNELS*NUM_ROWS*NUM_COLS*sizeof(int));
+		int vVal;
+		if (winner == 0) {
+			vVal = 0;
+		} else if (winner == node->state->currPlayer->winVal) {
+			vVal = 1;
+		} else {
+			vVal = -1;
+		}
+		*(vOut + count) = vVal;
+		memcpy(piOut + count*NUM_MOVES, node->pi, NUM_MOVES*sizeof(double));
+		count = count - 1;
 	}
-	printf("Got here \n");
+	
 	clearNodeSingle(node);
 	free(tree);
 	tree = NULL;
 	
-	printf("Endo \n");
 	Py_END_ALLOW_THREADS
 	//May not want line directly above
 }

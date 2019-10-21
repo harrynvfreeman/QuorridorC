@@ -15,6 +15,7 @@ extern const int NUM_CHANNELS;
 extern const int NUM_ROWS;
 extern const int NUM_COLS;
 extern const int NUM_MOVES;
+extern const int MAX_TURNS;
 
 extern const int hash_size;
 
@@ -86,6 +87,7 @@ struct Node {
 	int numChildren;
 	Node * parent;
 	int hasParent;
+	double * pi;
 	
 	//from Actions
 	//treating this as the child
@@ -155,7 +157,10 @@ void play(Tree * tree);
 void search(int numSimulations, Tree * tree);
 void selfPlay(int numSimulations, Tree * tree);
 void searchCython(int numSimulations, Tree * tree, int * gameState, double * v, double * p, int * isCReady, int * isModelReady, int * error);
-void selfPlayCython(int numSimulations, int * gameState, double * v, double * p, int * isCReady, int * isModelReady, int * error);
+void selfPlayCython(int numSimulations, int * gameState, double * v, double * p, 
+					int * isCReady, int * isModelReady, 
+					int * numTurns, int * gameStateOut, double * vOut, double * piOut,
+					int * error);
 
 void cFunctionWorking(int threadNum, int * val, int * wait);
 

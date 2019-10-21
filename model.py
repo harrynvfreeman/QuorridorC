@@ -13,8 +13,8 @@ from loss import softmax_cross_entropy_with_logits
 regConstant = 0.0001
 learningRate = 0.1
 momentum = 0.9
-inputShape = (9,9,65)
-outputShape = 12 + 2*64
+inputShape = (17,17,29)
+outputShape = 140
 
 def convLayer(x):
   a = Conv2D(256, [3, 3], padding='same', kernel_regularizer = regularizers.l2(regConstant), bias_initializer='random_uniform')(x)

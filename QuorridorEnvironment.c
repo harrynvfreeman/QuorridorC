@@ -330,6 +330,12 @@ int step(QE * qe, int action) {
 	}
 	
 	qe->turnNum = qe->turnNum + 1;
+	
+	if (qe->turnNum >= MAX_TURNS && qe->isGameOver == 0) {
+		qe->winner = 0;
+		qe->isGameOver = 1;
+	}
+	
 	Player * tempPlayer = qe->currPlayer;
 	qe->currPlayer = qe->nextPlayer;
 	qe->nextPlayer = tempPlayer;
@@ -1012,6 +1018,8 @@ int dfs(Tile * tile, Tile *** board, int yTarget, int ** visited, int action) {
 
 void updateGameState(QE * qe) {
 	int * gameState = qe->gameState;
+	int gameStateOffset;
+	//memset will work here
 	memset(qe->gameState, 0, NUM_ROWS*NUM_COLS*NUM_CHANNELS*sizeof(int));
 	
 	//player A pos
@@ -1042,17 +1050,30 @@ void updateGameState(QE * qe) {
 	}
 	
 	//player A blocks
-	memset(qe->gameState + xyzToVal(NUM_ROWS, NUM_COLS, 3+qe->playerA->numBlocks, 0, 0), 1, NUM_ROWS*NUM_COLS*sizeof(int));
+	gameStateOffset = xyzToVal(NUM_ROWS, NUM_COLS, 3+qe->playerA->numBlocks, 0, 0);
+	for (int i = gameStateOffset; i < gameStateOffset + NUM_ROWS*NUM_COLS; i++) {
+		*(gameState + i) = 1;
+	} 
 	
 	//playerB blocks
-	memset(qe->gameState + xyzToVal(NUM_ROWS, NUM_COLS, 14+qe->playerB->numBlocks, 0, 0), 1, NUM_ROWS*NUM_COLS*sizeof(int));
+	gameStateOffset = xyzToVal(NUM_ROWS, NUM_COLS, 14+qe->playerB->numBlocks, 0, 0);
+	for (int i = gameStateOffset; i < gameStateOffset + NUM_ROWS*NUM_COLS; i++) {
+		*(gameState + i) = 1;
+	}
 	
 	//has been repeated
-	memset(qe->gameState + xyzToVal(NUM_ROWS, NUM_COLS, 24+lookup(qe->pastStates, qe->hash), 0, 0), 1, NUM_ROWS*NUM_COLS*sizeof(int));
+	gameStateOffset = xyzToVal(NUM_ROWS, NUM_COLS, 24+lookup(qe->pastStates, qe->hash), 0, 0);
+	for (int i = gameStateOffset; i < gameStateOffset + NUM_ROWS*NUM_COLS; i++) {
+		*(gameState + i) = 1;
+	}
 	
 	//player
 	if (qe->currPlayer == qe->playerA) {
-		memset(qe->gameState + xyzToVal(NUM_ROWS, NUM_COLS, 28, 0, 0), 1, NUM_ROWS*NUM_COLS*sizeof(int));
+		//memset(gameState + xyzToVal(NUM_ROWS, NUM_COLS, 28, 0, 0), 1, NUM_ROWS*NUM_COLS*sizeof(int));
+		gameStateOffset = xyzToVal(NUM_ROWS, NUM_COLS, 28, 0, 0);
+		for (int i = gameStateOffset; i < gameStateOffset + NUM_ROWS*NUM_COLS; i++) {
+			*(gameState + i) = 1;
+		}
 	}
 }
 
@@ -1113,17 +1134,6 @@ void renderBlockRow(QE * qe, char * rend, int row) {
 		}
 	}
 }
-
-// void getValidMoves(QE * qe, int * isValid) {
-// 	if (qe->isGameOver == 1) {
-// 		memset(isValid, 0, NUM_MOVES*sizeof(int));
-// 		return;
-// 	}
-// 
-// 	for (int i = 0; i < NUM_MOVES; i++) {
-// 		*(isValid + i) = validate(qe, i);
-// 	}
-// }
 
 
 

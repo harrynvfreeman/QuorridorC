@@ -23,9 +23,10 @@ const int NUM_CHANNELS = 29;
 const int NUM_ROWS = 17;
 const int NUM_COLS = 17;
 const int NUM_BLOCKS = 5;
+const int MAX_TURNS = 50;
 const double e = 0.25;
 //const double e = 0;
-const double Cpuct = 1;
+const double Cpuct = 1.5;
 
 int mapTest();
 Player * playerTest();

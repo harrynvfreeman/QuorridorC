@@ -18,6 +18,7 @@ Node * createNode(QE * state) {
 	node->P = 0;
 	node->vLoss = 0;
 	node->move = -1;
+	node->pi = (double*)calloc(NUM_MOVES, sizeof(double));
 	
 	return node;
 }
@@ -43,6 +44,9 @@ void clearNode(Node * node) {
 		clearNode(child);
 	}
 	
+	free(node->pi);
+	node->pi = NULL;
+	
 	free(node->children);
 	node->children = NULL;
 	
@@ -54,6 +58,9 @@ void clearNode(Node * node) {
 void clearNodeSingle(Node * node) {
 	//Need to free state
 	clearQE(node->state);
+	
+	free(node->pi);
+	node->pi = NULL;
 	
 	free(node->children);
 	node->children = NULL;
@@ -144,24 +151,46 @@ void play(Tree * tree) {
 	
 	double r = ((double)rand())/((double)(RAND_MAX));
 	
-	int index = 0;
-	int found = 0;
-	
-	while (index < node->numChildren - 1 && found == 0) {
-		pi = (*(node->children + index))->N / node->N;
-		piSum = piSum + pi;
-		if (r <= piSum) {
-			found = 1;
-		}
-		index = index + 1;
+	double N = 0;
+	for (int i = 0; i < node->numChildren; i++) {
+		N = N + (*(node->children + i))->N;
 	}
 	
-	Node * nextRootNode = *(node->children + index);
+	int finalIndex = -1;	
+// 	printf("Node N is: %f \n", node->N);
+// 	printf("Node children is: %d \n", node->numChildren);
+// 	printf("Child N's are: ");
+	for (int index = 0; index < node->numChildren; index++) {
+		Node * child = *(node->children + index);
+		printf("%f, ", child->N);
+		pi = child->N / N;
+		*(node->pi + child->move) = pi;
+		piSum = piSum + pi; //moved out here for debugging, can move back in
+		if (finalIndex == -1) {
+			//piSum = piSum + pi;
+			if (r <= piSum) {
+				finalIndex = index;
+			}
+		}
+	}
+// 	printf("\n");
+// 	printf("PiSum is: %f \n", piSum);
+// 	printf("Pi is: ");
+// 	for (int i = 0; i < NUM_MOVES; i++) {
+// 		printf("%f, ", *(node->pi + i));
+// 	}
+// 	printf("\n");
+	
+	if (finalIndex == -1) {
+		finalIndex = node->numChildren - 1;
+	}
+	
+	Node * nextRootNode = *(node->children + finalIndex);
 	nextRootNode->hasParent = 0;
 	
 	//Need to clear all memory for non root
 	for (int i = 0; i < node->numChildren; i++) {
-		if (i != index) {
+		if (i != finalIndex) {
 			clearNode(*(node->children + i));
 		}
 	}
@@ -203,12 +232,15 @@ void backup(Node * origNode, double v) {
 	while(node->hasParent == 1) {
 		node->vLoss = node->vLoss - 1;
 		node->W = node->W + v;
+		node->N = node->N + 1; //if remove then uncomment in search
 		node->Q = (node->W - node->vLoss) / (node->N);
 		node = node->parent;
 	}
 	
-	//for the parent
-	node->N = node->N+1;
+	//for the root
+	// if (origNode->hasParent == 0) {
+// 		node->N = node->N + 1;
+// 	}
 }
 
 void backupCython(Node * origNode, double * v) {
@@ -216,17 +248,20 @@ void backupCython(Node * origNode, double * v) {
 	while(node->hasParent == 1) {
 		node->vLoss = node->vLoss - 1;
 		node->W = node->W + *v;
+		node->N = node->N + 1; //if remove then uncomment in search
 		node->Q = (node->W - node->vLoss) / (node->N);
 		node = node->parent;
 	}
 	
-	//for the parent
-	node->N = node->N+1;
+	//for the root
+	// if (origNode->hasParent == 0) {
+// 		node->N = node->N + 1;
+// 	}
 }
 
 //should probability be summed before or after valid moves
 void expandAndEvaluate(Node * node, double * p) {
-	int pSum = 0;
+	double pSum = 0;
 	int * validMoves = (int*)calloc(NUM_MOVES, sizeof(int));
 	
 	for (int i = 0; i < NUM_MOVES; i++) {
@@ -234,9 +269,12 @@ void expandAndEvaluate(Node * node, double * p) {
 			*(p + i) = expf(*(p+i));
 			pSum = pSum + *(p+i);
 			*(validMoves + i) = 1;
-		}
+		} //else {
+			//may not need this below, but throwing in in case
+			//*(p + i) = 0;
+		//}
 	}
-	//will divide not be double?
+	
 	for (int i = 0; i < NUM_MOVES; i++) {
 		if (*(validMoves + i) == 1) {
 			QE * nextState = cloneQE(node->state);
@@ -263,11 +301,12 @@ Node * selectMCTS(Node * rootNode) {
 		Node * child = *(node->children + index);
 		//printf("%d \n", node->numChildren);
 		double Q = child->Q;
-		double N = node->N;
+		double N;
 		double P;
 		
 		if (node->hasParent == 1) {
 			P = child->P;
+			N = node->N;
 		} else {
 			//*(dirichlet + r) = 1;
 			//P = (1-e)*(child->P) + e*(*(dirichlet + index));
@@ -278,6 +317,12 @@ Node * selectMCTS(Node * rootNode) {
 			}
 			//P = (1-e)*(child->P) + e*(*(dirichlet + index));
 			P = (1-e)*(child->P) + e*diriVal;
+			
+			N = 0;
+			for (int i = 0; i < node->numChildren; i++) {
+				N = N + (*(node->children + i))->N;
+			}
+			
 		}
 		double U = Cpuct * P * sqrtf(N) / (child->N + 1);
 		double maxVal = Q + U;
@@ -285,12 +330,6 @@ Node * selectMCTS(Node * rootNode) {
 		int maxInd = index;
 		for (int i = 1; i < node->numChildren; i++) {
 			index = (index + 1) % node->numChildren;
-			
-			if (diri == index) {
-				diriVal = 0.9;
-			} else {
-				diriVal = 0.1;
-			}
 			
 			child = *(node->children + index);
 			
@@ -300,6 +339,11 @@ Node * selectMCTS(Node * rootNode) {
 				P = child->P;
 			} else {
 				//P = (1-e)*(child->P) + e*(*(dirichlet + index));
+				if (diri == index) {
+					diriVal = 0.9;
+				} else {
+					diriVal = 0.1;
+				}
 				P = (1-e)*(child->P) + e*diriVal;
 			}
 			
@@ -312,7 +356,7 @@ Node * selectMCTS(Node * rootNode) {
 			
 		}
 		maxChild->vLoss = maxChild->vLoss + 1;
-		maxChild->N = maxChild->N + 1;
+		//maxChild->N = maxChild->N + 1; if re adding remove update in backup
 		maxChild->Q = (maxChild->W - maxChild->vLoss)/(maxChild->N);
 		node = maxChild;
 		
