@@ -13,8 +13,10 @@ int max(int a, int b);
 
 const int BOARD_HEIGHT = 9;
 const int BOARD_WIDTH = 9;
-const int hash_size = (5+2*(BOARD_HEIGHT-1)*(BOARD_WIDTH-1));
-const int NUM_MOVES = 12 + 2*(BOARD_HEIGHT-1)*(BOARD_WIDTH-1);
+//const int hash_size = (5+2*(BOARD_HEIGHT-1)*(BOARD_WIDTH-1));
+const int hash_size = 133;
+//const int NUM_MOVES = 12 + 2*(BOARD_HEIGHT-1)*(BOARD_WIDTH-1);
+const int NUM_MOVES = 140;
 const int MAX_Y = 7;
 const int MIN_Y = 2;
 const int MAX_X = 7;
