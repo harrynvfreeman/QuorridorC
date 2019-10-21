@@ -12,15 +12,15 @@ void searchCython(int numSimulations, Tree * tree, int * gameState, double * v,
 	struct timespec tm1,tm2;
 	tm1.tv_sec = 0;                                                            
     tm1.tv_nsec = 1000;
-	Node * node;
+	Node ** nodes = (Node**)malloc(sizeof(Node*));
 	double * vCopy = (double*)malloc(sizeof(double));
 	double * pCopy = (double*)malloc(NUM_MOVES*sizeof(double));
 	int i = 0;
 	int safety = 0;
 	while (i < numSimulations && safety < 1000) {
 		for (int b = 0; b < BATCH_SIZE; b++) {
-			node = selectMCTS(tree->rootNode);
-			memcpy(gameState + b*NUM_CHANNELS*NUM_ROWS*NUM_COLS, node->state->gameState, NUM_ROWS*NUM_COLS*NUM_CHANNELS*sizeof(int));
+			*(nodes+b) = selectMCTS(tree->rootNode);
+			memcpy(gameState + b*NUM_CHANNELS*NUM_ROWS*NUM_COLS, (*(nodes+b))->state->gameState, NUM_ROWS*NUM_COLS*NUM_CHANNELS*sizeof(int));
 		}
 		*(isModelReady) = 0;
 		*(isCReady) = 1;
@@ -33,18 +33,20 @@ void searchCython(int numSimulations, Tree * tree, int * gameState, double * v,
 		
 		//end states can be hit twice, not sure how I feel about that
 		for (int b = 0; b < BATCH_SIZE; b++) {
-			if (node->numChildren == 0) {
+			if ((*(nodes+b))->numChildren == 0) {
 				memcpy(vCopy, v + b, sizeof(double));
 				memcpy(pCopy, p + b*NUM_MOVES, NUM_MOVES*sizeof(double));
-				expandAndEvaluate(node, pCopy);
+				expandAndEvaluate((*(nodes+b)), pCopy);
 				i = i + 1;
 			} else {
 				*vCopy = 0;
 			}
-			backupCython(node, vCopy);
+			backupCython((*(nodes+b)), vCopy);
 			safety = safety + 1;
 		}
 	}
+	free(nodes);
+	nodes = NULL;
 	free(vCopy);
 	vCopy = NULL;
 	free(pCopy);
