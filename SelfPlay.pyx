@@ -241,7 +241,7 @@ cpdef selfPlay(model):
     cdef np.ndarray[DTYPE_t] v_mid
     
     modelInput = np.zeros((BATCH_SIZE, NUM_ROWS, NUM_COLS, NUM_CHANNELS))
-    while(thread0.is_alive() and thread1.is_alive() and thread2.is_alive() and thread3.is_alive()):
+    while(thread0.is_alive() or thread1.is_alive() or thread2.is_alive() or thread3.is_alive()):
         if isCReadyPointer0[0] == 1:
             modelInput = np.transpose(np.reshape(gameState0, [BATCH_SIZE, NUM_CHANNELS, NUM_ROWS, NUM_COLS]), (0, 2, 3, 1))
             modelOut = model.predict(modelInput)
