@@ -18,7 +18,7 @@ void searchCython(int numSimulations, Tree * tree, int * gameState, double * v,
 	int i = 0;
 	int safety = 0;
 	while (i < numSimulations && safety < 1000) {
-		for (int b = 0; b < BATCH_SIZE; b++) {
+		for (int b = 0; b < BATCH_SIZE; ++b) {
 			*(nodes+b) = selectMCTS(tree->rootNode);
 			memcpy(gameState + b*NUM_CHANNELS*NUM_ROWS*NUM_COLS, (*(nodes+b))->state->gameState, NUM_ROWS*NUM_COLS*NUM_CHANNELS*sizeof(int));
 		}
@@ -32,17 +32,17 @@ void searchCython(int numSimulations, Tree * tree, int * gameState, double * v,
 		}
 		
 		//end states can be hit twice, not sure how I feel about that
-		for (int b = 0; b < BATCH_SIZE; b++) {
+		for (int b = 0; b < BATCH_SIZE; ++b) {
 			if ((*(nodes+b))->numChildren == 0) {
 				memcpy(vCopy, v + b, sizeof(double));
 				memcpy(pCopy, p + b*NUM_MOVES, NUM_MOVES*sizeof(double));
 				expandAndEvaluate(*(nodes+b), pCopy);
-				i = i + 1;
+				++i;
 			} else {
 				*vCopy = 0;
 			}
 			backupCython(*(nodes+b), vCopy);
-			safety = safety + 1;
+			++safety;
 		}
 	}
 	free(nodes);
@@ -105,7 +105,7 @@ void selfPlayCython(int numSimulations, int * gameState, double * v, double * p,
 		//render(tree->rootNode->state, 1);
 		searchCython(numSimulations, tree, gameState, v, p, isCReady, isModelReady, error);
 		play(tree);
-		stopper = stopper + 1;
+		++stopper;
 	}	
 	
 	render(tree->rootNode->state, 1);
@@ -137,7 +137,7 @@ void selfPlayCython(int numSimulations, int * gameState, double * v, double * p,
 		}
 		*(vOut + count) = vVal;
 		memcpy(piOut + count*NUM_MOVES, node->pi, NUM_MOVES*sizeof(double));
-		count = count - 1;
+		--count;
 	}
 	
 	clearNodeSingle(node);
