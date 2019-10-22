@@ -327,7 +327,6 @@ Node * selectMCTS(Node * rootNode) {
 		double U = Cpuct * P * sqrtf(N) / (child->N + 1);
 		double maxVal = Q + U;
 		Node * maxChild = child;
-		int maxInd = index;
 		for (int i = 1; i < node->numChildren; ++i) {
 			index = (index + 1) % node->numChildren;
 			
@@ -351,7 +350,6 @@ Node * selectMCTS(Node * rootNode) {
 			if (Q + U > maxVal) {
 				maxVal = Q + U;
 				maxChild = child;
-				maxInd = i;
 			}
 			
 		}
