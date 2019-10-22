@@ -108,7 +108,7 @@ void selfPlayCython(int numSimulations, int * gameState, double * v, double * p,
 		++stopper;
 	}	
 	
-	render(tree->rootNode->state, 1);
+	//render(tree->rootNode->state, 1);
 	if (stopper >= 500) {
 		printf("SOMETHING WENT WRONG UH OH");
 		*(error) = 1;

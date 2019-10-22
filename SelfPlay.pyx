@@ -10,6 +10,7 @@ import random
 from SavedState import SavedState, writeSavedState
 from datetime import datetime
 import Train
+from multiprocessing import Process
 
 #DTYPE = np.float32
 DTYPE = np.dtype('d')
@@ -37,9 +38,16 @@ cpdef selfPlayFull():
     model = load_model('./models/model.h5', custom_objects={'softmax_cross_entropy_with_logits': softmax_cross_entropy_with_logits})
     for temp in range(1):
         print('Start temp: ' + str(temp))
-        for s in range(50):
+        for s in range(8):
             print('SelfPlaying: ' + str(s))
-            selfPlay(model)
+            processes = []
+            for i in range(8):
+                process = Process(target=selfPlay, args=(model,))
+                processes.append(process)
+                process.start()
+            #selfPlay(model)
+            for process in processes:
+                process.join()
             print('Training: ' + str(s))
             Train.train(model)
             print('Trained: ' + str(s))
