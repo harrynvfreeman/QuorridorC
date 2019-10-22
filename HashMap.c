@@ -6,7 +6,7 @@
 
 MapNode * cloneMapNode(MapNode * cloneFrom);
 
-//is there a function to make this quicker.
+//there is a function to make this quicker.
 int compareHash(int * a, int * b) {
 	for (int i = 0; i < hash_size; ++i) {
 		if (*(a+i) != *(b+i)) {
