@@ -12,7 +12,7 @@ void searchCython(int numSimulations, Tree * tree, int * gameState, double * v,
 	struct timespec tm1,tm2;
 	tm1.tv_sec = 0;                                                            
     tm1.tv_nsec = 1000;
-	Node ** nodes = (Node**)malloc(sizeof(Node*));
+	Node ** nodes = (Node**)malloc(BATCH_SIZE*sizeof(Node*));
 	double * vCopy = (double*)malloc(sizeof(double));
 	double * pCopy = (double*)malloc(NUM_MOVES*sizeof(double));
 	int i = 0;
@@ -36,12 +36,12 @@ void searchCython(int numSimulations, Tree * tree, int * gameState, double * v,
 			if ((*(nodes+b))->numChildren == 0) {
 				memcpy(vCopy, v + b, sizeof(double));
 				memcpy(pCopy, p + b*NUM_MOVES, NUM_MOVES*sizeof(double));
-				expandAndEvaluate((*(nodes+b)), pCopy);
+				expandAndEvaluate(*(nodes+b), pCopy);
 				i = i + 1;
 			} else {
 				*vCopy = 0;
 			}
-			backupCython((*(nodes+b)), vCopy);
+			backupCython(*(nodes+b), vCopy);
 			safety = safety + 1;
 		}
 	}
