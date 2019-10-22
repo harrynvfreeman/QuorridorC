@@ -37,12 +37,12 @@ void searchCython(int numSimulations, Tree * tree, int * gameState, double * v,
 				memcpy(vCopy, v + b, sizeof(double));
 				memcpy(pCopy, p + b*NUM_MOVES, NUM_MOVES*sizeof(double));
 				expandAndEvaluate(*(nodes+b), pCopy);
-				++i;
+				i = i + 1;
 			} else {
 				*vCopy = 0;
 			}
 			backupCython(*(nodes+b), vCopy);
-			++safety;
+			safety = safety + 1;
 		}
 	}
 	free(nodes);
@@ -55,11 +55,11 @@ void searchCython(int numSimulations, Tree * tree, int * gameState, double * v,
 
 void search(int numSimulations, Tree * tree) {
 	double * p = (double*)malloc(NUM_MOVES*sizeof(double));
-	for (int i = 0; i < numSimulations; ++i) {
+	for (int i = 0; i < numSimulations; i++) {
 		//printf("Selecting \n");
 		Node * node = selectMCTS(tree->rootNode);
 		double v = ((double)rand())/((double)RAND_MAX/2) - 1;
-		for (int i = 0; i < NUM_MOVES; ++i) {
+		for (int i = 0; i < NUM_MOVES; i++) {
 			*(p+i) = ((double)rand())/RAND_MAX;
 		}
 		//printf("Expanding \n");
@@ -92,7 +92,7 @@ void selfPlayCython(int numSimulations, int * gameState, double * v, double * p,
 					int * isCReady, int * isModelReady, 
 					int * numTurns, int * gameStateOut, double * vOut, double * piOut,
 					int * error) {
-	srand(time(NULL));
+	//srand(time(NULL));
 	//May not want line directly below
 	Py_BEGIN_ALLOW_THREADS
 	*(error) = 0;
@@ -105,7 +105,7 @@ void selfPlayCython(int numSimulations, int * gameState, double * v, double * p,
 		//render(tree->rootNode->state, 1);
 		searchCython(numSimulations, tree, gameState, v, p, isCReady, isModelReady, error);
 		play(tree);
-		++stopper;
+		stopper = stopper + 1;
 	}	
 	
 	render(tree->rootNode->state, 1);
@@ -137,7 +137,7 @@ void selfPlayCython(int numSimulations, int * gameState, double * v, double * p,
 		}
 		*(vOut + count) = vVal;
 		memcpy(piOut + count*NUM_MOVES, node->pi, NUM_MOVES*sizeof(double));
-		--count;
+		count = count - 1;
 	}
 	
 	clearNodeSingle(node);

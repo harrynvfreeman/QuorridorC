@@ -39,7 +39,7 @@ void clearNode(Node * node) {
 	//Need to free state
 	clearQE(node->state);
 		
-	for (int i = 0; i < node->numChildren; ++i) {
+	for (int i = 0; i < node->numChildren; i++) {
 		Node * child = *(node->children + i);
 		clearNode(child);
 	}
@@ -152,7 +152,7 @@ void play(Tree * tree) {
 	double r = ((double)rand())/((double)(RAND_MAX));
 	
 	double N = 0;
-	for (int i = 0; i < node->numChildren; ++i) {
+	for (int i = 0; i < node->numChildren; i++) {
 		N = N + (*(node->children + i))->N;
 	}
 	
@@ -160,7 +160,7 @@ void play(Tree * tree) {
 // 	printf("Node N is: %f \n", node->N);
 // 	printf("Node children is: %d \n", node->numChildren);
  	//printf("Child N's are: ");
-	for (int index = 0; index < node->numChildren; ++index) {
+	for (int index = 0; index < node->numChildren; index++) {
 		Node * child = *(node->children + index);
 		//printf("%f, ", child->N);
 		pi = child->N / N;
@@ -189,7 +189,7 @@ void play(Tree * tree) {
 	nextRootNode->hasParent = 0;
 	
 	//Need to clear all memory for non root
-	for (int i = 0; i < node->numChildren; ++i) {
+	for (int i = 0; i < node->numChildren; i++) {
 		if (i != finalIndex) {
 			clearNode(*(node->children + i));
 		}
@@ -264,7 +264,7 @@ void expandAndEvaluate(Node * node, double * p) {
 	double pSum = 0;
 	int * validMoves = (int*)calloc(NUM_MOVES, sizeof(int));
 	
-	for (int i = 0; i < NUM_MOVES; ++i) {
+	for (int i = 0; i < NUM_MOVES; i++) {
 		if (validate(node->state, i) == 1) {
 			*(p + i) = expf(*(p+i));
 			pSum = pSum + *(p+i);
@@ -275,7 +275,7 @@ void expandAndEvaluate(Node * node, double * p) {
 		//}
 	}
 	
-	for (int i = 0; i < NUM_MOVES; ++i) {
+	for (int i = 0; i < NUM_MOVES; i++) {
 		if (*(validMoves + i) == 1) {
 			QE * nextState = cloneQE(node->state);
 			step(nextState, i);
@@ -327,7 +327,8 @@ Node * selectMCTS(Node * rootNode) {
 		double U = Cpuct * P * sqrtf(N) / (child->N + 1);
 		double maxVal = Q + U;
 		Node * maxChild = child;
-		for (int i = 1; i < node->numChildren; ++i) {
+		int maxInd = index;
+		for (int i = 1; i < node->numChildren; i++) {
 			index = (index + 1) % node->numChildren;
 			
 			child = *(node->children + index);
@@ -350,6 +351,7 @@ Node * selectMCTS(Node * rootNode) {
 			if (Q + U > maxVal) {
 				maxVal = Q + U;
 				maxChild = child;
+				maxInd = i;
 			}
 			
 		}
