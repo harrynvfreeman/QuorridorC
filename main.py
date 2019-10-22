@@ -1,0 +1,3 @@
+import SelfPlayC
+
+SelfPlayC.selfPlayFull()

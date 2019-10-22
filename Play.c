@@ -102,7 +102,7 @@ void selfPlayCython(int numSimulations, int * gameState, double * v, double * p,
 
 	int stopper = 0;
 	while(tree->rootNode->state->isGameOver == 0 && stopper < 500) {
-		render(tree->rootNode->state, 1);
+		//render(tree->rootNode->state, 1);
 		searchCython(numSimulations, tree, gameState, v, p, isCReady, isModelReady, error);
 		play(tree);
 		stopper = stopper + 1;

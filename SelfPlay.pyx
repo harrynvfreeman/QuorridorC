@@ -32,8 +32,20 @@ cdef extern from "Quorridor.h":
     int MAX_TURNS
     int BATCH_SIZE
     
-cpdef selfPlay():
+cpdef selfPlayFull():
     model = load_model('./models/model.h5', custom_objects={'softmax_cross_entropy_with_logits': softmax_cross_entropy_with_logits})
+    for temp in range(5):
+        print('Start temp: ' + str(temp))
+        for s in range(100):
+            print('SelfPlaying: ' + str(s))
+            SelfPlayC.selfPlay(model)
+            print('Training: ' + str(s))
+            Train.train()
+            print('Trained: ' + str(s))
+        print('End temp: ' + str(temp))
+
+cpdef selfPlay(model):
+    #model = load_model('./models/model.h5', custom_objects={'softmax_cross_entropy_with_logits': softmax_cross_entropy_with_logits})
 
     cdef np.ndarray[DTYPE_INT_t] gameState
     cdef np.ndarray[DTYPE_t] v
@@ -106,7 +118,9 @@ cpdef selfPlay():
         savedState = SavedState(gameStateOutReshape[i], piOutReshape[i], vOut[i])
         savePath = "./positionsToBeProcessed/position-" + datetime.now().strftime("%d-%b-%Y-%H-%M-%S-%f")
         writeSavedState(savedState, savePath)
-        
+    
+    if errorPointer[0] == 1:
+        print('There was and Error, Investigate')
     #gameState[0] = 1
     #v[0] = 1
     #p[0] = 1

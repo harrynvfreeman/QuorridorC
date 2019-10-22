@@ -1,4 +1,4 @@
-from keras.models import load_model
+#from keras.models import load_model
 from loss import softmax_cross_entropy_with_logits
 from datetime import datetime
 from glob import glob
@@ -8,7 +8,7 @@ from os.path import basename
 from SavedState import SavedState, readSavedState, VersionDescriptor, writeSavedState
 import numpy as np
 
-def train():
+def train(model):
     
     versionDescriptor = readSavedState("./models/version")
     version = versionDescriptor.version
@@ -30,7 +30,7 @@ def train():
         values[count] = savedState.value
     
     y = {'valueHead' : values, 'policyHead': pis}
-    model = load_model('./models/model.h5', custom_objects={'softmax_cross_entropy_with_logits': softmax_cross_entropy_with_logits})
+    #model = load_model('./models/model.h5', custom_objects={'softmax_cross_entropy_with_logits': softmax_cross_entropy_with_logits})
     #NOT Doing model.save('./depModels/' + modelName + '-' + datetime.now().strftime("%d-%b-%Y-%H-%M-%S-%f") + '.h5')
     
     model.fit(gameStates, y, batch_size=32, epochs=1)
