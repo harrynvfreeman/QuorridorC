@@ -92,7 +92,7 @@ void selfPlayCython(int numSimulations, int * gameState, double * v, double * p,
 					int * isCReady, int * isModelReady, 
 					int * numTurns, int * gameStateOut, double * vOut, double * piOut,
 					int * error) {
-	//srand(time(NULL));
+	srand(time(NULL));
 	//May not want line directly below
 	Py_BEGIN_ALLOW_THREADS
 	*(error) = 0;
