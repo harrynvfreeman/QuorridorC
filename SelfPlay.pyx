@@ -37,7 +37,7 @@ cpdef selfPlayFull():
     model = load_model('./models/model.h5', custom_objects={'softmax_cross_entropy_with_logits': softmax_cross_entropy_with_logits})
     for temp in range(1):
         print('Start temp: ' + str(temp))
-        for s in range(100):
+        for s in range(50):
             print('SelfPlaying: ' + str(s))
             selfPlay(model)
             print('Training: ' + str(s))
