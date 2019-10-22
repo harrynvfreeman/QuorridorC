@@ -9,6 +9,7 @@ from libc.stdlib cimport malloc, free
 import random
 from SavedState import SavedState, writeSavedState
 from datetime import datetime
+import Train
 
 #DTYPE = np.float32
 DTYPE = np.dtype('d')
@@ -38,7 +39,7 @@ cpdef selfPlayFull():
         print('Start temp: ' + str(temp))
         for s in range(100):
             print('SelfPlaying: ' + str(s))
-            SelfPlayC.selfPlay(model)
+            selfPlay(model)
             print('Training: ' + str(s))
             Train.train()
             print('Trained: ' + str(s))
