@@ -38,13 +38,12 @@ cpdef selfPlayFull():
     temp = 0
     while True:
         print('Start temp: ' + str(temp))
-        for s in range(25):
+        for s in range(12):
             print('SelfPlaying: ' + str(s))
             selfPlay(model)
-            print('Training: ' + str(s))
-            Train.train(model)
-            print('Trained: ' + str(s))
+            print('Done: ' + str(s))
         print('End temp: ' + str(temp))
+        Train.train(model)
         temp = temp + 1
 
 cpdef selfPlay(model):
