@@ -10,6 +10,7 @@ import random
 from SavedState import SavedState, writeSavedState
 from datetime import datetime
 import Train
+import tensorflow as tf
 
 #DTYPE = np.float32
 DTYPE = np.dtype('d')
@@ -35,22 +36,25 @@ cdef extern from "Quorridor.h":
     
 cpdef selfPlayFull():
     model = load_model('./models/model.h5', custom_objects={'softmax_cross_entropy_with_logits': softmax_cross_entropy_with_logits})
-    for temp in range(1):
-        print('Start temp: ' + str(temp))
-        for s in range(8):
-            print('SelfPlaying: ' + str(s))
-            processes = []
-            for i in range(8):
-                process = threading.Thread(target=selfPlay, args=(model,))
-                processes.append(process)
-                process.start()
-            #selfPlay(model)
-            for process in processes:
-                process.join()
-            print('Training: ' + str(s))
-            Train.train(model)
-            print('Trained: ' + str(s))
-        print('End temp: ' + str(temp))
+    global graph
+    graph = tf.get_default_graph()
+    with graph.as_default():
+        for temp in range(1):
+            print('Start temp: ' + str(temp))
+            for s in range(8):
+                print('SelfPlaying: ' + str(s))
+                processes = []
+                for i in range(8):
+                    process = threading.Thread(target=selfPlay, args=(model,))
+                    processes.append(process)
+                    process.start()
+                #selfPlay(model)
+                for process in processes:
+                    process.join()
+                print('Training: ' + str(s))
+                Train.train(model)
+                print('Trained: ' + str(s))
+            print('End temp: ' + str(temp))
 
 cpdef selfPlay(model):
     #model = load_model('./models/model.h5', custom_objects={'softmax_cross_entropy_with_logits': softmax_cross_entropy_with_logits})
