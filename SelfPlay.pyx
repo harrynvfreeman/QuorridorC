@@ -35,15 +35,17 @@ cdef extern from "Quorridor.h":
     
 cpdef selfPlayFull():
     model = load_model('./models/model.h5', custom_objects={'softmax_cross_entropy_with_logits': softmax_cross_entropy_with_logits})
-    for temp in range(1):
+    temp = 0
+    while True:
         print('Start temp: ' + str(temp))
-        for s in range(12):
+        for s in range(25):
             print('SelfPlaying: ' + str(s))
             selfPlay(model)
             print('Training: ' + str(s))
             Train.train(model)
             print('Trained: ' + str(s))
         print('End temp: ' + str(temp))
+        temp = temp + 1
 
 cpdef selfPlay(model):
     #model = load_model('./models/model.h5', custom_objects={'softmax_cross_entropy_with_logits': softmax_cross_entropy_with_logits})
