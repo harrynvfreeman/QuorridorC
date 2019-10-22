@@ -10,7 +10,6 @@ import random
 from SavedState import SavedState, writeSavedState
 from datetime import datetime
 import Train
-from multiprocessing import Process
 
 #DTYPE = np.float32
 DTYPE = np.dtype('d')
@@ -42,7 +41,7 @@ cpdef selfPlayFull():
             print('SelfPlaying: ' + str(s))
             processes = []
             for i in range(8):
-                process = Process(target=selfPlay, args=(model,))
+                process = threading.Thread(target=selfPlay, args=(model,))
                 processes.append(process)
                 process.start()
             #selfPlay(model)
