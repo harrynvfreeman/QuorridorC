@@ -140,6 +140,19 @@ void playButDoesNotWorkIdkWhy(Tree * tree) {
 	
 }
 
+void playHuman(Tree * tree, int move) {
+	//Start with just resetting the tree
+	//Later we can not reset it
+	Node * node = tree->rootNode;
+	
+	QE * nextState = cloneQE(node->state);
+	step(nextState, move);
+	
+	tree->rootNode = createNode(nextState);
+	
+	clearNode(node);
+}
+
 void play(Tree * tree) {
 	//int r = rand() % tree->rootNode->numChildren;
 	//tree->rootNode = *(tree->rootNode->children + r);

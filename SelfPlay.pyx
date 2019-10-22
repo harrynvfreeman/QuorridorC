@@ -25,6 +25,10 @@ cdef extern from "Quorridor.h":
     int * isCReady, int * isModelReady,
     int * numTurns, int * gameStateOut, double * vOut, double * piOut,
     int * error)
+    void playMatchCython(int numSimulations, int * gameState, double * v, double * p,
+    int * isCReady, int * isModelReady,
+    int * isCReadyForHuman, int * isHumanReady, int * humanMove,
+    int * error)
     void cFunctionWorking(int threadNum, int * val, int * wait);
     int NUM_MOVES
     int NUM_CHANNELS
@@ -33,6 +37,80 @@ cdef extern from "Quorridor.h":
     int MAX_TURNS
     int BATCH_SIZE
     
+cpdef playMatch():
+    model = load_model('./models/model.h5', custom_objects={'softmax_cross_entropy_with_logits': softmax_cross_entropy_with_logits})
+    
+    cdef np.ndarray[DTYPE_INT_t] gameState0
+    cdef np.ndarray[DTYPE_t] v0
+    cdef np.ndarray[DTYPE_t] p0
+    cdef np.ndarray[DTYPE_INT_t] isCReady0
+    cdef np.ndarray[DTYPE_INT_t] isModelReady0
+    cdef np.ndarray[DTYPE_INT_t] isCReadyForHuman0
+    cdef np.ndarray[DTYPE_INT_t] isHumanReady0
+    cdef np.ndarray[DTYPE_INT_t] humanMove0
+    cdef np.ndarray[DTYPE_INT_t] error0
+    cdef int * gameStatePointer0
+    cdef double * vPointer0
+    cdef double * pPointer0
+    cdef int * isCReadyPointer0
+    cdef int * isModelReadyPointer0
+    cdef int * isCReadyForHumanPointer0
+    cdef int * isHumanReadyPointer0
+    cdef int * humanMovePointer0
+    cdef int * errorPointer0
+    
+    gameState0 = np.zeros((BATCH_SIZE*NUM_CHANNELS*NUM_ROWS*NUM_COLS), dtype=DTYPE_INT)
+    v0 = np.zeros((BATCH_SIZE), dtype=DTYPE)
+    p0 = np.zeros((BATCH_SIZE*NUM_MOVES), dtype=DTYPE)
+    isCReady0 = np.zeros((1), dtype=DTYPE_INT)
+    isModelReady0 = np.zeros((1), dtype=DTYPE_INT)
+    isCReadyForHuman0 = np.zeros((1), dtype = DTYPE_INT)
+    isHumanReady0 = np.zeros((1), dtype = DTYPE_INT)
+    humanMove0 = np.zeros((1), dtype = DTYPE_INT)
+    error0 = np.zeros((1), dtype=DTYPE_INT)
+    gameStatePointer0 = <int *> gameState0.data
+    vPointer0 = <double *> v0.data
+    pPointer0 = <double *> p0.data
+    isCReadyPointer0 = <int *> isCReady0.data
+    isModelReadyPointer0 = <int *> isModelReady0.data
+    isCReadyForHumanPointer0 = <int*>isCReadyForHuman0.data
+    isHumanReadyPointer0 = <int*>isHumanReady0.data
+    humanMovePointer0 = <int*>humanMove0.data
+    errorPointer0 = <int *> error0.data
+    
+    thread0 = threading.Thread(target=runPlayMatchC, args=(400, gameState0, v0, p0, isCReady0, isModelReady0, isCReadyForHuman0, isHumanReady0, humanMove0, error0))
+    thread0.start()
+    
+    cdef int readMove
+    
+    modelInput = np.zeros((BATCH_SIZE, NUM_ROWS, NUM_COLS, NUM_CHANNELS))
+    while(thread0.is_alive()):
+        if isCReadyPointer0[0] == 1:
+            modelInput = np.transpose(np.reshape(gameState0, [BATCH_SIZE, NUM_CHANNELS, NUM_ROWS, NUM_COLS]), (0, 2, 3, 1))
+            modelOut = model.predict(modelInput)
+            v_model = modelOut[0].astype('d')
+            p_model = modelOut[1].astype('d').flatten()
+            v0[:] = v_model[:, 0]
+            p0[:] = p_model[:]
+            isCReadyPointer0[0] = 0
+            isModelReadyPointer0[0] = 1
+        if isCReadyForHumanPointer[0] == 1:
+            readMove = int(input("What is your age? "))
+            humanMovePointer[0] = readMove
+            isCReadyForHumanPointer[0] = 0
+            isHumanReadyPointer[0] = 1
+            
+    thread0.join()
+
+cdef runPlayMatchC(int numSimulations, np.ndarray[DTYPE_INT_t] gameState, np.ndarray[DTYPE_t] v, np.ndarray[DTYPE_t] p,
+np.ndarray[DTYPE_INT_t] isCReady, np.ndarray[DTYPE_INT_t] isModelReady,
+np.ndarray[DTYPE_INT_t] isCReadyForHuman, np.ndarray[DTYPE_INT_t] isHumanReady, np.ndarray[DTYPE_INT_t] humanMove,
+np.ndarray[DTYPE_INT_t] error):
+    playMatchCython(numSimulations, <int *> gameState.data, <double *> v.data, <double *> p.data,
+    <int *> isCReady.data, <int *> isModelReady.data,
+    <int *> isCReadyForHuman.data, <int *> isHumanReady.data, <int *> humanMove.data,
+    <int *> error.data)
+###########################################################################
 cpdef selfPlayFull():
     model = load_model('./models/model.h5', custom_objects={'softmax_cross_entropy_with_logits': softmax_cross_entropy_with_logits})
     temp = 0

@@ -153,6 +153,7 @@ void backupCython(Node * origNode, double * v);
 void clearNode(Node * node);
 void clearNodeSingle(Node * node);
 void play(Tree * tree);
+void playHuman(Tree * tree, int move);
 
 //from play
 void search(int numSimulations, Tree * tree);
@@ -161,6 +162,10 @@ void searchCython(int numSimulations, Tree * tree, int * gameState, double * v, 
 void selfPlayCython(int numSimulations, int * gameState, double * v, double * p, 
 					int * isCReady, int * isModelReady, 
 					int * numTurns, int * gameStateOut, double * vOut, double * piOut,
+					int * error);
+void playMatchCython(int numSimulations, int * gameState, double * v, double * p, 
+					int * isCReady, int * isModelReady, 
+					int * isCReadyForHuman, int * isHumanReady, int * humanMove,
 					int * error);
 
 void cFunctionWorking(int threadNum, int * val, int * wait);

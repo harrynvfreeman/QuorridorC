@@ -88,6 +88,45 @@ void cFunctionWorking(int threadNum, int * val, int * wait) {
 	printf("Wait is %d for thread %d \n", *(wait), threadNum);
 }
 
+void playMatchCython(int numSimulations, int * gameState, double * v, double * p, 
+					int * isCReady, int * isModelReady, 
+					int * isCReadyForHuman, int * isHumanReady, int * humanMove,
+					int * error) {
+
+	srand(time(NULL));
+	Py_BEGIN_ALLOW_THREADS
+	
+	struct timespec tm1,tm2;
+	tm1.tv_sec = 0;                                                            
+    tm1.tv_nsec = 1000;
+    
+	*(error) = 0;
+	QE * qe = resetQE();
+	Tree * tree = (Tree*)malloc(sizeof(Tree));
+	tree->rootNode = createNode(qe);
+	
+	render(tree->rootNode->state, 1);
+	while(tree->rootNode->state->isGameOver == 0) {
+		searchCython(numSimulations, tree, gameState, v, p, isCReady, isModelReady, error);
+		play(tree);
+		render(tree->rootNode->state, 1);
+		if (tree->rootNode->state->isGameOver == 0) {
+			*(isHumanReady) = 0;
+			*(isCReadyForHuman) = 1;
+			while (*(isHumanReady) == 0) {
+				nanosleep(&tm1,&tm2);
+			}
+			playHuman(tree, humanMove);
+			render(tree->rootNode->state, 1);
+		}
+	}
+	
+	//Not freeing right now, will have to
+	printf('Winner is: %d \n', tree->rootNode->state->winner);
+	
+	Py_END_ALLOW_THREADS
+}
+
 void selfPlayCython(int numSimulations, int * gameState, double * v, double * p, 
 					int * isCReady, int * isModelReady, 
 					int * numTurns, int * gameStateOut, double * vOut, double * piOut,
