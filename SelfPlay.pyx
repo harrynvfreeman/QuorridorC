@@ -303,7 +303,7 @@ cpdef selfPlay(model):
     
     ##########################################################3
     
-    thread0 = threading.Thread(target=runSelfPlayC, args=(400, gameState0, v0, p0, isCReady0, isModelReady0, numTurns0, gameStateOut0, vOut0, piOut0, error0))
+    thread0 = threading.Thread(target=runSelfPlayC, args=(200, gameState0, v0, p0, isCReady0, isModelReady0, numTurns0, gameStateOut0, vOut0, piOut0, error0))
     thread1 = threading.Thread(target=runSelfPlayC, args=(400, gameState1, v1, p1, isCReady1, isModelReady1, numTurns1, gameStateOut1, vOut1, piOut1, error1))
     thread2 = threading.Thread(target=runSelfPlayC, args=(400, gameState2, v2, p2, isCReady2, isModelReady2, numTurns2, gameStateOut2, vOut2, piOut2, error2))
     thread3 = threading.Thread(target=runSelfPlayC, args=(400, gameState3, v3, p3, isCReady3, isModelReady3, numTurns3, gameStateOut3, vOut3, piOut3, error3))
