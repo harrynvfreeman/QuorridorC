@@ -116,7 +116,7 @@ void playMatchCython(int numSimulations, int * gameState, double * v, double * p
 			while (*(isHumanReady) == 0) {
 				nanosleep(&tm1,&tm2);
 			}
-			playHuman(tree, humanMove);
+			playHuman(tree, *humanMove);
 			render(tree->rootNode->state, 1);
 		}
 	}
