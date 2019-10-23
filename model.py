@@ -11,8 +11,9 @@ from loss import softmax_cross_entropy_with_logits
 #K.get_value(test.optimizer.lr)
 
 regConstant = 0.0001
-learningRate = 0.1
-momentum = 0.9
+learningRate = 0.01
+#momentum = 0.9
+momentum = 1
 inputShape = (17,17,29)
 outputShape = 140
 
@@ -50,7 +51,7 @@ def policyHead(x):
   y = Dense(outputShape, name = 'policyHead', kernel_regularizer = regularizers.l2(regConstant), bias_initializer='random_uniform')(d)
   return y
 
-def buildNetwork(x, numRes = 19):
+def buildNetwork(x, numRes = 10):
   a = convLayer(x);
   for i in range(numRes):
     a = residualLayer(a)
@@ -67,8 +68,8 @@ def buildModel():
     "valueHead": "mean_squared_error",
     "policyHead": softmax_cross_entropy_with_logits,
   }
-  lossWeights = {"valueHead": 1.0, "policyHead": 1.0}
+  lossWeights = {"valueHead": 0.7, "policyHead": 0.3}
 
   model = Model(inputs = [a], outputs = [value, policy])
-  model.compile(optimizer=SGD(lr=learningRate, momentum = momentum, clipvalue=1), loss=losses, loss_weights=lossWeights)
+  model.compile(optimizer=SGD(lr=learningRate, momentum = momentum), loss=losses, loss_weights=lossWeights)
   return model

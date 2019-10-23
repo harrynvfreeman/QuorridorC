@@ -309,9 +309,9 @@ cpdef selfPlay(model):
     thread3 = threading.Thread(target=runSelfPlayC, args=(400, gameState3, v3, p3, isCReady3, isModelReady3, numTurns3, gameStateOut3, vOut3, piOut3, error3))
     
     thread0.start()
-    thread1.start()
-    thread2.start()
-    thread3.start()
+    #thread1.start()
+    #thread2.start()
+    #thread3.start()
     
     cdef int i
     cdef int j
@@ -369,26 +369,26 @@ cpdef selfPlay(model):
         savePath = "./positionsToBeProcessed/position-" + datetime.now().strftime("%d-%b-%Y-%H-%M-%S-%f")
         writeSavedState(savedState, savePath)
     ###########################
-    gameStateOutReshape = np.transpose(np.reshape(gameStateOut1, [MAX_TURNS, NUM_CHANNELS, NUM_ROWS, NUM_COLS]), (0, 2, 3, 1))
-    piOutReshape = np.reshape(piOut1, [MAX_TURNS, NUM_MOVES])
-    for i in range(numTurnsPointer1[0]):
-        savedState = SavedState(gameStateOutReshape[i], piOutReshape[i], vOut1[i])
-        savePath = "./positionsToBeProcessed/position-" + datetime.now().strftime("%d-%b-%Y-%H-%M-%S-%f")
-        writeSavedState(savedState, savePath)
+    #gameStateOutReshape = np.transpose(np.reshape(gameStateOut1, [MAX_TURNS, NUM_CHANNELS, NUM_ROWS, NUM_COLS]), (0, 2, 3, 1))
+    #piOutReshape = np.reshape(piOut1, [MAX_TURNS, NUM_MOVES])
+    #for i in range(numTurnsPointer1[0]):
+        #savedState = SavedState(gameStateOutReshape[i], piOutReshape[i], vOut1[i])
+        #savePath = "./positionsToBeProcessed/position-" + datetime.now().strftime("%d-%b-%Y-%H-%M-%S-%f")
+        #writeSavedState(savedState, savePath)
     ###########################
-    gameStateOutReshape = np.transpose(np.reshape(gameStateOut2, [MAX_TURNS, NUM_CHANNELS, NUM_ROWS, NUM_COLS]), (0, 2, 3, 1))
-    piOutReshape = np.reshape(piOut2, [MAX_TURNS, NUM_MOVES])
-    for i in range(numTurnsPointer2[0]):
-        savedState = SavedState(gameStateOutReshape[i], piOutReshape[i], vOut2[i])
-        savePath = "./positionsToBeProcessed/position-" + datetime.now().strftime("%d-%b-%Y-%H-%M-%S-%f")
-        writeSavedState(savedState, savePath)
+    #gameStateOutReshape = np.transpose(np.reshape(gameStateOut2, [MAX_TURNS, NUM_CHANNELS, NUM_ROWS, NUM_COLS]), (0, 2, 3, 1))
+    #piOutReshape = np.reshape(piOut2, [MAX_TURNS, NUM_MOVES])
+    #for i in range(numTurnsPointer2[0]):
+        #savedState = SavedState(gameStateOutReshape[i], piOutReshape[i], vOut2[i])
+        #savePath = "./positionsToBeProcessed/position-" + datetime.now().strftime("%d-%b-%Y-%H-%M-%S-%f")
+        #writeSavedState(savedState, savePath)
     #############################
-    gameStateOutReshape = np.transpose(np.reshape(gameStateOut3, [MAX_TURNS, NUM_CHANNELS, NUM_ROWS, NUM_COLS]), (0, 2, 3, 1))
-    piOutReshape = np.reshape(piOut3, [MAX_TURNS, NUM_MOVES])
-    for i in range(numTurnsPointer3[0]):
-        savedState = SavedState(gameStateOutReshape[i], piOutReshape[i], vOut3[i])
-        savePath = "./positionsToBeProcessed/position-" + datetime.now().strftime("%d-%b-%Y-%H-%M-%S-%f")
-        writeSavedState(savedState, savePath)
+    #gameStateOutReshape = np.transpose(np.reshape(gameStateOut3, [MAX_TURNS, NUM_CHANNELS, NUM_ROWS, NUM_COLS]), (0, 2, 3, 1))
+    #piOutReshape = np.reshape(piOut3, [MAX_TURNS, NUM_MOVES])
+    #for i in range(numTurnsPointer3[0]):
+        #savedState = SavedState(gameStateOutReshape[i], piOutReshape[i], vOut3[i])
+        #savePath = "./positionsToBeProcessed/position-" + datetime.now().strftime("%d-%b-%Y-%H-%M-%S-%f")
+        #writeSavedState(savedState, savePath)
     ###########################
     
     if errorPointer0[0] == 1 or errorPointer1[0] == 1 or errorPointer2[0] == 1 or errorPointer3[0] == 1:
@@ -400,9 +400,9 @@ cpdef selfPlay(model):
     #isModelReady[0] = 1
     #error[0] = 1
     thread0.join()
-    thread1.join()
-    thread2.join()
-    thread3.join()
+    #thread1.join()
+    #thread2.join()
+    #thread3.join()
     
     
 cdef runSelfPlayC(int numSimulations, np.ndarray[DTYPE_INT_t] gameState, np.ndarray[DTYPE_t] v, np.ndarray[DTYPE_t] p,

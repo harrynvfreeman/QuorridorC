@@ -187,13 +187,13 @@ void play(Tree * tree) {
 			}
 		}
 	}
- 	//printf("\n");
- 	//printf("PiSum is: %f \n", piSum);
- 	//printf("Pi is: ");
- 	//for (int i = 0; i < NUM_MOVES; i++) {
- 	//	printf("%f, ", *(node->pi + i));
- 	//}
- 	//printf("\n");
+ 	printf("\n");
+ 	printf("PiSum is: %f \n", piSum);
+ 	printf("Pi is: ");
+ 	for (int i = 0; i < NUM_MOVES; i++) {
+ 		printf("%f, ", *(node->pi + i));
+ 	}
+ 	printf("\n");
 	
 	if (finalIndex == -1) {
 		finalIndex = node->numChildren - 1;

@@ -24,12 +24,12 @@ const int MIN_X = 2;
 const int NUM_CHANNELS = 29;
 const int NUM_ROWS = 17;
 const int NUM_COLS = 17;
-const int NUM_BLOCKS = 5;
+const int NUM_BLOCKS = 4;
 const int MAX_TURNS = 100;
 const int BATCH_SIZE = 16;
 const double e = .3;
 //const double e = 0;
-const double Cpuct = 2;
+const double Cpuct = 1;
 
 int mapTest();
 Player * playerTest();
