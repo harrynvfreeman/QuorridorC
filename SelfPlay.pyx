@@ -362,12 +362,12 @@ cpdef selfPlay(model):
             isModelReadyPointer3[0] = 1
         #################
     
-    gameStateOutReshape = np.transpose(np.reshape(gameStateOut0, [MAX_TURNS, NUM_CHANNELS, NUM_ROWS, NUM_COLS]), (0, 2, 3, 1))
-    piOutReshape = np.reshape(piOut0, [MAX_TURNS, NUM_MOVES])
-    for i in range(numTurnsPointer0[0]):
-        savedState = SavedState(gameStateOutReshape[i], piOutReshape[i], vOut0[i])
-        savePath = "./positionsToBeProcessed/position-" + datetime.now().strftime("%d-%b-%Y-%H-%M-%S-%f")
-        writeSavedState(savedState, savePath)
+    #gameStateOutReshape = np.transpose(np.reshape(gameStateOut0, [MAX_TURNS, NUM_CHANNELS, NUM_ROWS, NUM_COLS]), (0, 2, 3, 1))
+    #piOutReshape = np.reshape(piOut0, [MAX_TURNS, NUM_MOVES])
+    #for i in range(numTurnsPointer0[0]):
+        #savedState = SavedState(gameStateOutReshape[i], piOutReshape[i], vOut0[i])
+        #savePath = "./positionsToBeProcessed/position-" + datetime.now().strftime("%d-%b-%Y-%H-%M-%S-%f")
+        #writeSavedState(savedState, savePath)
     ###########################
     #gameStateOutReshape = np.transpose(np.reshape(gameStateOut1, [MAX_TURNS, NUM_CHANNELS, NUM_ROWS, NUM_COLS]), (0, 2, 3, 1))
     #piOutReshape = np.reshape(piOut1, [MAX_TURNS, NUM_MOVES])

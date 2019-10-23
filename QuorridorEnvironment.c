@@ -280,10 +280,10 @@ int validate(QE * qe, int action) {
 		}
 		return isMovePlayerUpLeftValid(qe);
 	} else if (action >= 12 + posToValVertBlock(MIN_Y, MIN_X, BOARD_WIDTH) &&
-		action <= 12 + posToValVertBlock(MAX_Y-1, MAX_X-1, BOARD_WIDTH)) {
+		action <= 12 + posToValVertBlock(MAX_Y-2, MAX_X-2, BOARD_WIDTH)) {
 		return isPlaceVerticalBlockValid(qe, action - 12);	
 	} else if (action >= 12 + (BOARD_HEIGHT-1)*(BOARD_WIDTH-1) + posToValHorizBlock(MIN_Y, MIN_X, BOARD_HEIGHT)
-		&& action <= 12 + (BOARD_HEIGHT-1)*(BOARD_WIDTH-1) + posToValHorizBlock(MAX_Y-1, MAX_X-1, BOARD_HEIGHT)) {
+		&& action <= 12 + (BOARD_HEIGHT-1)*(BOARD_WIDTH-1) + posToValHorizBlock(MAX_Y-2, MAX_X-2, BOARD_HEIGHT)) {
 		return isPlaceHorizontalBlockValid(qe, action - 12 - (BOARD_HEIGHT-1)*(BOARD_WIDTH-1));	
 	} else {
 		//return -1;
