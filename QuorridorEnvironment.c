@@ -317,11 +317,11 @@ int step(QE * qe, int action) {
 	} else if (action == 11) {
 		movePlayerUpLeft(qe);
 	} else if (action >= 12 + posToValVertBlock(MIN_Y, MIN_X, BOARD_WIDTH) &&
-		action <= 12 + posToValVertBlock(MAX_Y-1, MAX_X-1, BOARD_WIDTH)) {
+		action <= 12 + posToValVertBlock(MAX_Y-2, MAX_X-2, BOARD_WIDTH)) {
 		placeVerticalBlock(qe, action - 12);
 		empty(qe->pastStates);
 	} else if (action >= 12 + (BOARD_HEIGHT-1)*(BOARD_WIDTH-1) + posToValHorizBlock(MIN_Y, MIN_X, BOARD_HEIGHT)
-		&& action <= 12 + (BOARD_HEIGHT-1)*(BOARD_WIDTH-1) + posToValHorizBlock(MAX_Y-1, MAX_X-1, BOARD_HEIGHT)) {
+		&& action <= 12 + (BOARD_HEIGHT-1)*(BOARD_WIDTH-1) + posToValHorizBlock(MAX_Y-2, MAX_X-2, BOARD_HEIGHT)) {
 		placeHorizontalBlock(qe, action - 12 - (BOARD_HEIGHT-1)*(BOARD_WIDTH-1));
 		empty(qe->pastStates);	
 	} else {
@@ -801,7 +801,7 @@ int isPlaceVerticalBlockValid(QE * qe, int m) {
 		*(visitedNext + i) = (int*)malloc(BOARD_WIDTH*sizeof(int));
 	}
 	int dfsResultCurr = dfs(qe->board[qe->currPlayer->yPos][qe->currPlayer->xPos], qe->board, qe->currPlayer->yTarget, visitedCurr, m);
-	int dfsResultNext = dfs(qe->board[qe->nextPlayer->yPos][qe->nextPlayer->xPos], qe->board, qe->nextPlayer->yTarget, visitedNext, m+1);
+	int dfsResultNext = dfs(qe->board[qe->nextPlayer->yPos][qe->nextPlayer->xPos], qe->board, qe->nextPlayer->yTarget, visitedNext, m);
 	
 	//WARNING not sure about this
 	for (int i = 0; i < BOARD_HEIGHT; ++i) {
