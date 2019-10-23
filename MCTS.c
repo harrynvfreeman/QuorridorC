@@ -191,7 +191,7 @@ void play(Tree * tree) {
  	printf("PiSum is: %f \n", piSum);
  	printf("Pi is: ");
  	for (int i = 0; i < NUM_MOVES; i++) {
- 		printf("(%f, %d), ", *(node->pi + i), validate(node->state, i));
+ 		printf("(%d, %f, %d), ", i, *(node->pi + i), validate(node->state, i));
  	}
  	printf("\n");
 	
