@@ -143,7 +143,7 @@ void playButDoesNotWorkIdkWhy(Tree * tree) {
 void playHuman(Tree * tree, int move) {
 	//Start with just resetting the tree
 	//Later we can not reset it
-	print("Move is: %d \n");
+	print("Move is: %d \n", move);
 	Node * node = tree->rootNode;
 	
 	QE * nextState = cloneQE(node->state);
