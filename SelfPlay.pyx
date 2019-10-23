@@ -94,11 +94,11 @@ cpdef playMatch():
             p0[:] = p_model[:]
             isCReadyPointer0[0] = 0
             isModelReadyPointer0[0] = 1
-        if isCReadyForHumanPointer[0] == 1:
+        if isCReadyForHumanPointer0[0] == 1:
             readMove = int(input("What is your age? "))
-            humanMovePointer[0] = readMove
-            isCReadyForHumanPointer[0] = 0
-            isHumanReadyPointer[0] = 1
+            humanMovePointer0[0] = readMove
+            isCReadyForHumanPointer0[0] = 0
+            isHumanReadyPointer0[0] = 1
             
     thread0.join()
 
