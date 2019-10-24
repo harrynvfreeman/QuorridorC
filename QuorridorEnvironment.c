@@ -797,8 +797,8 @@ int isPlaceVerticalBlockValid(QE * qe, int m) {
 	int ** visitedCurr = (int**)malloc(BOARD_HEIGHT*sizeof(int*));
 	int ** visitedNext = (int**)malloc(BOARD_HEIGHT*sizeof(int*));
 	for (int i = 0; i < BOARD_HEIGHT; ++i) {
-		*(visitedCurr + i) = (int*)malloc(BOARD_WIDTH*sizeof(int));
-		*(visitedNext + i) = (int*)malloc(BOARD_WIDTH*sizeof(int));
+		*(visitedCurr + i) = (int*)calloc(BOARD_WIDTH,sizeof(int));
+		*(visitedNext + i) = (int*)calloc(BOARD_WIDTH,sizeof(int));
 	}
 	int dfsResultCurr = dfs(qe->board[qe->currPlayer->yPos][qe->currPlayer->xPos], qe->board, qe->currPlayer->yTarget, visitedCurr, m);
 	int dfsResultNext = dfs(qe->board[qe->nextPlayer->yPos][qe->nextPlayer->xPos], qe->board, qe->nextPlayer->yTarget, visitedNext, m);
