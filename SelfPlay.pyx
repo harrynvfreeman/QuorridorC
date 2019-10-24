@@ -134,17 +134,20 @@ np.ndarray[DTYPE_INT_t] error):
 cpdef selfPlayFull():
     model = load_model('./models/model.h5', custom_objects={'softmax_cross_entropy_with_logits': softmax_cross_entropy_with_logits})
     temp = 0
+    cdef int gameNumber
     while True:
+        gameNumber = 0
         print('Start temp: ' + str(temp))
-        for s in range(12):
+        for s in range(1000):
             print('SelfPlaying: ' + str(s))
-            selfPlay(model)
+            selfPlay(model, gameNumber)
+            gameNumber = gameNumber + 1
             print('Done: ' + str(s))
         print('End temp: ' + str(temp))
         Train.train(model)
         temp = temp + 1
 
-cpdef selfPlay(model):
+cpdef selfPlay(model, int gameNumber):
     model = load_model('./models/model.h5', custom_objects={'softmax_cross_entropy_with_logits': softmax_cross_entropy_with_logits})
 
     cdef np.ndarray[DTYPE_INT_t] gameState0
@@ -239,7 +242,7 @@ cpdef selfPlay(model):
     piOutReshape = np.reshape(piOut0, [MAX_TURNS, NUM_MOVES])
     for i in range(numTurnsPointer0[0]):
         savedState = SavedState(gameStateOutReshape[i], piOutReshape[i], vOut0[i])
-        savePath = "./positionsToBeProcessed/position-" + datetime.now().strftime("%d-%b-%Y-%H-%M-%S-%f")
+        savePath = "./positionsToBeProcessed/position-" + str(gameNumber) + "-" + datetime.now().strftime("%d-%b-%Y-%H-%M-%S-%f")
         writeSavedState(savedState, savePath)
     
     if errorPointer0[0] == 1:
