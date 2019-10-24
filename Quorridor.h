@@ -152,22 +152,28 @@ void backup(Node * origNode, double v);
 void backupCython(Node * origNode, double * v);
 void clearNode(Node * node);
 void clearNodeSingle(Node * node);
-void play(Tree * tree);
+void play(Tree * tree, double * pRChoice, int * indRChoice, int * rChoiceReadyC, int * rChoiceReadyModel);
 void playHuman(Tree * tree, int move);
 
 //from play
 void search(int numSimulations, Tree * tree);
-void selfPlay(int numSimulations, Tree * tree);
+//void selfPlay(int numSimulations, Tree * tree);
 void searchCython(int numSimulations, Tree * tree, int * gameState, double * v, double * p, int * isCReady, int * isModelReady, int * error);
-void selfPlayCython(int numSimulations, int * gameState, double * v, double * p, 
-					int * isCReady, int * isModelReady, 
-					int * numTurns, int * gameStateOut, double * vOut, double * piOut,
-					int * error);
 void playMatchCython(int numSimulations, int * gameState, double * v, double * p, 
 					int * isCReady, int * isModelReady, 
 					int * isCReadyForHuman, int * isHumanReady, int * humanMove,
+					double * pRChoice, int * indRChoice, int * rChoiceReadyC, int * rChoiceReadyModel,
+					int * error);
+void selfPlayCython(int numSimulations, int * gameState, double * v, double * p, 
+					int * isCReady, int * isModelReady, 
+					int * numTurns, int * gameStateOut, double * vOut, double * piOut,
+					double * pRChoice, int * indRChoice, int * rChoiceReadyC, int * rChoiceReadyModel,
 					int * error);
 
 void cFunctionWorking(int threadNum, int * val, int * wait);
+
+//from random_real
+double
+random_real(void);
 
 #endif

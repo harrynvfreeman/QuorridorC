@@ -79,10 +79,10 @@ void cFunctionWorking(int threadNum, int * val, int * wait) {
 	while (*(wait) == 0) {
 		*val = *(val) + 1;
 		//printf("Val is now: %d for thread %d \n", *(val), threadNum);
-		Py_BEGIN_ALLOW_THREADS;
+		//Py_BEGIN_ALLOW_THREADS;
 		nanosleep(&tm1,&tm2);
 		//sleep(1);
-		Py_END_ALLOW_THREADS
+		//Py_END_ALLOW_THREADS
 	}
 	
 	printf("Wait is %d for thread %d \n", *(wait), threadNum);
@@ -91,10 +91,11 @@ void cFunctionWorking(int threadNum, int * val, int * wait) {
 void playMatchCython(int numSimulations, int * gameState, double * v, double * p, 
 					int * isCReady, int * isModelReady, 
 					int * isCReadyForHuman, int * isHumanReady, int * humanMove,
+					double * pRChoice, int * indRChoice, int * rChoiceReadyC, int * rChoiceReadyModel,
 					int * error) {
 
 	srand(time(NULL));
-	Py_BEGIN_ALLOW_THREADS
+	//Py_BEGIN_ALLOW_THREADS
 	
 	struct timespec tm1,tm2;
 	tm1.tv_sec = 0;                                                            
@@ -108,7 +109,7 @@ void playMatchCython(int numSimulations, int * gameState, double * v, double * p
 	render(tree->rootNode->state, 1);
 	while(tree->rootNode->state->isGameOver == 0) {
 		searchCython(numSimulations, tree, gameState, v, p, isCReady, isModelReady, error);
-		play(tree);
+		play(tree, pRChoice, indRChoice, rChoiceReadyC, rChoiceReadyModel);
 		render(tree->rootNode->state, 1);
 		if (tree->rootNode->state->isGameOver == 0) {
 			*(isHumanReady) = 0;
@@ -122,14 +123,15 @@ void playMatchCython(int numSimulations, int * gameState, double * v, double * p
 	}
 	
 	//Not freeing right now, will have to
-	printf('Winner is: %d \n', tree->rootNode->state->winner);
+	printf("Winner is: %d \n", tree->rootNode->state->winner);
 	
-	Py_END_ALLOW_THREADS
+	//Py_END_ALLOW_THREADS
 }
 
 void selfPlayCython(int numSimulations, int * gameState, double * v, double * p, 
 					int * isCReady, int * isModelReady, 
 					int * numTurns, int * gameStateOut, double * vOut, double * piOut,
+					double * pRChoice, int * indRChoice, int * rChoiceReadyC, int * rChoiceReadyModel,
 					int * error) {
 	srand(time(NULL));
 	//May not want line directly below
@@ -141,13 +143,13 @@ void selfPlayCython(int numSimulations, int * gameState, double * v, double * p,
 
 	int stopper = 0;
 	while(tree->rootNode->state->isGameOver == 0 && stopper < 500) {
-		//render(tree->rootNode->state, 1);
+		render(tree->rootNode->state, 1);
 		searchCython(numSimulations, tree, gameState, v, p, isCReady, isModelReady, error);
-		play(tree);
+		play(tree, pRChoice, indRChoice, rChoiceReadyC, rChoiceReadyModel);
 		++stopper;
 	}	
 	
-	//render(tree->rootNode->state, 1);
+	render(tree->rootNode->state, 1);
 	if (stopper >= 500) {
 		printf("SOMETHING WENT WRONG UH OH");
 		*(error) = 1;
@@ -188,28 +190,28 @@ void selfPlayCython(int numSimulations, int * gameState, double * v, double * p,
 }
 
 
-void selfPlay(int numSimulations, Tree * tree) {
-	int stopper = 0;
-	while(tree->rootNode->state->isGameOver == 0 && stopper < 500) {
-		render(tree->rootNode->state, 1);
-		search(numSimulations, tree);
-		play(tree);
-		stopper = stopper + 1;
-	}	
-	
-	if (stopper >= 500) {
-		printf("SOMETHING WENT WRONG GAME KEPT GOING");
-	}
-	
-	Node * node = tree->rootNode;
-	Node * temp;
-	while(node->parent != NULL) {
-		temp = node->parent;
-		clearNodeSingle(node);
-		node = temp;
-	}
-	clearNodeSingle(node);
-	free(tree);
-	tree = NULL;
-	
-}
+// void selfPlay(int numSimulations, Tree * tree) {
+// 	int stopper = 0;
+// 	while(tree->rootNode->state->isGameOver == 0 && stopper < 500) {
+// 		render(tree->rootNode->state, 1);
+// 		search(numSimulations, tree);
+// 		play(tree);
+// 		stopper = stopper + 1;
+// 	}	
+// 	
+// 	if (stopper >= 500) {
+// 		printf("SOMETHING WENT WRONG GAME KEPT GOING");
+// 	}
+// 	
+// 	Node * node = tree->rootNode;
+// 	Node * temp;
+// 	while(node->parent != NULL) {
+// 		temp = node->parent;
+// 		clearNodeSingle(node);
+// 		node = temp;
+// 	}
+// 	clearNodeSingle(node);
+// 	free(tree);
+// 	tree = NULL;
+// 	
+// }

@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <math.h>
+#include <time.h>
 
 Node * createNode(QE * state) {
 	Node * node = (Node*)malloc(sizeof(Node));
@@ -154,61 +155,95 @@ void playHuman(Tree * tree, int move) {
 	clearNode(node);
 }
 
-void play(Tree * tree) {
+void play(Tree * tree, double * pRChoice, int * indRChoice, int * rChoiceReadyC, int * rChoiceReadyModel) {
 	//int r = rand() % tree->rootNode->numChildren;
 	//tree->rootNode = *(tree->rootNode->children + r);
 	
 	double pi;
-	double piSum = 0;
+	//double piSum = 0;
 	
 	Node * node = tree->rootNode;
 	
-	double r = ((double)rand())/((double)(RAND_MAX));
+	//double r = ((double)rand())/((double)(RAND_MAX));
+	//printf("r is: %f \n", r);
 	
 	double N = 0;
 	for (int i = 0; i < node->numChildren; ++i) {
 		N = N + (*(node->children + i))->N;
 	}
 	
-	int finalIndex = -1;	
-// 	printf("Node N is: %f \n", node->N);
-// 	printf("Node children is: %d \n", node->numChildren);
- 	//printf("Child N's are: ");
+	// for (int i = 0; i < NUM_CHANNELS; i++) {
+// 		for (int j = 0; j < NUM_ROWS; j++) {
+// 			for (int k = 0; k < NUM_COLS; k++) {
+// 				printf("%d, ", *(node->state->gameState + i*NUM_ROWS*NUM_COLS + j*NUM_COLS + k));
+// 			}
+// 			printf("\n");
+// 		}
+// 		printf("\n");
+// 		printf("\n");
+// 		printf("\n");
+// 		printf("\n");
+// 		printf("\n");
+// 	}
+	
+	//int finalIndex = -1;	
+ 	printf("Node N is: %f \n", node->N);
+ 	printf("Node children is: %d \n", node->numChildren);
+ 	printf("Child N's are: ");
+ 	memset(pRChoice, 0, NUM_MOVES*sizeof(double));
 	for (int index = 0; index < node->numChildren; ++index) {
 		Node * child = *(node->children + index);
-		//printf("%f, ", child->N);
+		printf("%f, ", child->N);
 		pi = child->N / N;
 		*(node->pi + child->move) = pi;
-		piSum = piSum + pi; //moved out here for debugging, can move back in
-		if (finalIndex == -1) {
+		*(pRChoice + index) = pi;
+		//piSum = piSum + pi; //moved out here for debugging, can move back in
+		//printf("PSum is now: %f \n", piSum);
+		//if (finalIndex == -1) {
 			//piSum = piSum + pi;
-			if (r <= piSum) {
-				finalIndex = index;
-			}
-		}
+			//if (r <= piSum) {
+			//	finalIndex = index;
+			//}
+		//}
 	}
  	printf("\n");
- 	printf("PiSum is: %f \n", piSum);
+ 	//printf("PiSum is: %f \n", piSum);
  	printf("Pi is: ");
  	for (int i = 0; i < NUM_MOVES; i++) {
  		printf("(%d, %f, %d), ", i, *(node->pi + i), validate(node->state, i));
  	}
  	printf("\n");
 	
-	if (finalIndex == -1) {
-		finalIndex = node->numChildren - 1;
+	
+	
+	// if (finalIndex == -1) {
+// 		finalIndex = node->numChildren - 1;
+// 	}
+	
+	struct timespec tm1,tm2;
+	tm1.tv_sec = 0;                                                            
+    tm1.tv_nsec = 1000;
+    *(rChoiceReadyModel) = 0;
+	*(rChoiceReadyC) = 1;
+	while (*(rChoiceReadyModel) == 0) {
+		nanosleep(&tm1,&tm2);
 	}
 	
-	Node * nextRootNode = *(node->children + finalIndex);
+	printf("random move selected was: %d \n", *indRChoice);
+	
+	//Node * nextRootNode = *(node->children + finalIndex);
+	Node * nextRootNode = *(node->children + *indRChoice);
+	printf("Move is: %d \n", nextRootNode->move);
 	nextRootNode->hasParent = 0;
 	
 	//Need to clear all memory for non root
 	for (int i = 0; i < node->numChildren; ++i) {
-		if (i != finalIndex) {
+		//if (i != finalIndex) {
+		if (i != *indRChoice) {
 			clearNode(*(node->children + i));
 		}
 	}
-	
+	printf("Did we make it to here \n");
 	tree->rootNode = nextRootNode;
 }
 

@@ -45,7 +45,12 @@ void selfPlayTest0();
 
 int main() {
 	srand(time(NULL));
-	selfPlayTest0();
+	QE * qe = resetQE();
+	for (int i = 0; i < NUM_MOVES; i++) {
+		int test = validate(qe, i);
+		printf("(%d, %d) \n", i, test);
+	}
+	
 	//printf("%d \n", tile->yPos);
 	printf("Hello \n");
 }
@@ -54,7 +59,7 @@ void selfPlayTest0() {
 	QE * qe = resetQE();
 	Tree * tree = (Tree*)malloc(sizeof(Tree));
 	tree->rootNode = createNode(qe);
-	selfPlay(400, tree);
+	//selfPlay(400, tree);
 }
 
 void playTest0() {
