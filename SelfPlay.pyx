@@ -7,7 +7,7 @@ from numpy cimport ndarray
 import threading
 from libc.stdlib cimport malloc, free
 import random
-from SavedState import SavedState, writeSavedState
+from SavedState import SavedState, writeSavedState, readSavedState
 from datetime import datetime
 import Train
 
@@ -240,6 +240,14 @@ cpdef selfPlay(model, int gameNumber):
     
     gameStateOutReshape = np.transpose(np.reshape(gameStateOut0, [MAX_TURNS, NUM_CHANNELS, NUM_ROWS, NUM_COLS]), (0, 2, 3, 1))
     piOutReshape = np.reshape(piOut0, [MAX_TURNS, NUM_MOVES])
+    if vOut0[i] == 0:
+        drawDescriptor = readSavedState("./models/draw")
+        drawDescriptor.version = drawDescriptor.version + 1
+        writeSavedState(drawDescriptor, "./models/draw")
+    else:
+        winDescriptor = readSavedState("./models/win")
+        winDescriptor.version = winDescriptor.version + 1
+        writeSavedState(winDescriptor, "./models/win")
     for i in range(numTurnsPointer0[0]):
         savedState = SavedState(gameStateOutReshape[i], piOutReshape[i], vOut0[i])
         savePath = "./positionsToBeProcessed/position-" + str(gameNumber) + "-" + datetime.now().strftime("%d-%b-%Y-%H-%M-%S-%f")

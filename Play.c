@@ -143,13 +143,13 @@ void selfPlayCython(int numSimulations, int * gameState, double * v, double * p,
 
 	int stopper = 0;
 	while(tree->rootNode->state->isGameOver == 0 && stopper < 500) {
-		render(tree->rootNode->state, 1);
+		//render(tree->rootNode->state, 1);
 		searchCython(numSimulations, tree, gameState, v, p, isCReady, isModelReady, error);
 		play(tree, pRChoice, indRChoice, rChoiceReadyC, rChoiceReadyModel);
 		++stopper;
 	}	
 	
-	render(tree->rootNode->state, 1);
+	//render(tree->rootNode->state, 1);
 	if (stopper >= 500) {
 		printf("SOMETHING WENT WRONG UH OH");
 		*(error) = 1;

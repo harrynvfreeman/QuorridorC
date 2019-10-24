@@ -187,13 +187,13 @@ void play(Tree * tree, double * pRChoice, int * indRChoice, int * rChoiceReadyC,
 // 	}
 	
 	//int finalIndex = -1;	
- 	printf("Node N is: %f \n", node->N);
- 	printf("Node children is: %d \n", node->numChildren);
- 	printf("Child N's are: ");
+ 	//printf("Node N is: %f \n", node->N);
+ 	//printf("Node children is: %d \n", node->numChildren);
+ 	//printf("Child N's are: ");
  	memset(pRChoice, 0, NUM_MOVES*sizeof(double));
 	for (int index = 0; index < node->numChildren; ++index) {
 		Node * child = *(node->children + index);
-		printf("%f, ", child->N);
+		//printf("%f, ", child->N);
 		pi = child->N / N;
 		*(node->pi + child->move) = pi;
 		*(pRChoice + index) = pi;
@@ -206,13 +206,13 @@ void play(Tree * tree, double * pRChoice, int * indRChoice, int * rChoiceReadyC,
 			//}
 		//}
 	}
- 	printf("\n");
+ 	//printf("\n");
  	//printf("PiSum is: %f \n", piSum);
- 	printf("Pi is: ");
- 	for (int i = 0; i < NUM_MOVES; i++) {
- 		printf("(%d, %f, %d), ", i, *(node->pi + i), validate(node->state, i));
- 	}
- 	printf("\n");
+ 	//printf("Pi is: ");
+ 	//for (int i = 0; i < NUM_MOVES; i++) {
+ 	//	printf("(%d, %f, %d), ", i, *(node->pi + i), validate(node->state, i));
+ 	//}
+ 	//printf("\n");
 	
 	
 	
@@ -229,11 +229,11 @@ void play(Tree * tree, double * pRChoice, int * indRChoice, int * rChoiceReadyC,
 		nanosleep(&tm1,&tm2);
 	}
 	
-	printf("random move selected was: %d \n", *indRChoice);
+	//printf("random move selected was: %d \n", *indRChoice);
 	
 	//Node * nextRootNode = *(node->children + finalIndex);
 	Node * nextRootNode = *(node->children + *indRChoice);
-	printf("Move is: %d \n", nextRootNode->move);
+	//printf("Move is: %d \n", nextRootNode->move);
 	nextRootNode->hasParent = 0;
 	
 	//Need to clear all memory for non root
@@ -243,7 +243,7 @@ void play(Tree * tree, double * pRChoice, int * indRChoice, int * rChoiceReadyC,
 			clearNode(*(node->children + i));
 		}
 	}
-	printf("Did we make it to here \n");
+	//printf("Did we make it to here \n");
 	tree->rootNode = nextRootNode;
 }
 
