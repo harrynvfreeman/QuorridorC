@@ -148,7 +148,7 @@ cpdef selfPlayFull():
         temp = temp + 1
 
 cpdef selfPlay(model, int gameNumber):
-    model = load_model('./models/model.h5', custom_objects={'softmax_cross_entropy_with_logits': softmax_cross_entropy_with_logits})
+    //model = load_model('./models/model.h5', custom_objects={'softmax_cross_entropy_with_logits': softmax_cross_entropy_with_logits})
 
     cdef np.ndarray[DTYPE_INT_t] gameState0
     cdef np.ndarray[DTYPE_t] v0
