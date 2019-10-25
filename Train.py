@@ -13,12 +13,13 @@ def train(model):
     versionDescriptor = readSavedState("./models/version")
     version = versionDescriptor.version
     
-    timeStamp, numFiles = moveFilesForProcessing(version)
+    #timeStamp, numFiles = moveFilesForProcessing(version)
     
-    if numFiles == 0:
-        rmdir(timeStamp)
-        return
-    
+    #if numFiles == 0:
+        #rmdir(timeStamp)
+        #return
+    timeStamp = 'positionsBeingProcessed-0-25-Oct-2019-04-30-51-754982'
+    numFiles = 6000
     gameStates = np.zeros((numFiles, 17, 17, 29))
     pis = np.zeros((numFiles, 140))
     values = np.zeros((numFiles, 1))
