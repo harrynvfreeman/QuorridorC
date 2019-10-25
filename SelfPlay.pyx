@@ -119,7 +119,7 @@ cpdef selfPlayFull():
     while True:
         gameNumber = 0
         print('Start temp: ' + str(temp))
-        for s in range(1000):
+        for s in range(200):
             print('SelfPlaying: ' + str(s))
             selfPlay(model, gameNumber)
             gameNumber = gameNumber + 1
