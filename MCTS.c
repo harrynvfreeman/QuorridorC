@@ -155,6 +155,31 @@ void playHuman(Tree * tree, int move) {
 	clearNode(node);
 }
 
+void playAgainstHuman(Tree * tree) {
+	Node * node = tree->rootNode;
+	double maxVal = 0;
+	int maxInd = 0;
+	for (int i = 0; i < node->numChildren; ++i) {
+		Node * child = *(node->children + i);
+		if (child->N > maxVal) {
+			maxVal = child->N;
+			maxInd = i;
+		}
+	}
+	
+	Node * nextRootNode = *(node->children + maxInd);
+	nextRootNode->hasParent = 0;
+	
+	for (int i = 0; i < node->numChildren; ++i) {
+		if (i != maxInd) {
+			clearNode(*(node->children + i));
+		}
+	}
+
+	tree->rootNode = nextRootNode;
+	
+}
+
 void play(Tree * tree, double * pRChoice, int * indRChoice, int * rChoiceReadyC, int * rChoiceReadyModel) {
 	//int r = rand() % tree->rootNode->numChildren;
 	//tree->rootNode = *(tree->rootNode->children + r);

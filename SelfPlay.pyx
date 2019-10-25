@@ -26,10 +26,9 @@ cdef extern from "Quorridor.h":
     int * numTurns, int * gameStateOut, double * vOut, double * piOut,
     double * pRChoice, int * indRChoice, int * rChoiceReadyC, int * rChoiceReadyModel,
     int * error)
-    void playMatchCython(int numSimulations, int * gameState, double * v, double * p,
-    int * isCReady, int * isModelReady,
+    void playMatchCython(int numSimulations, int * gameState, double * v, double * p, 
+    int * isCReady, int * isModelReady, 
     int * isCReadyForHuman, int * isHumanReady, int * humanMove,
-    double * pRChoice, int * indRChoice, int * rChoiceReadyC, int * rChoiceReadyModel,
     int * error)
     void cFunctionWorking(int threadNum, int * val, int * wait);
     int NUM_MOVES
@@ -50,10 +49,6 @@ cpdef playMatch():
     cdef np.ndarray[DTYPE_INT_t] isCReadyForHuman0
     cdef np.ndarray[DTYPE_INT_t] isHumanReady0
     cdef np.ndarray[DTYPE_INT_t] humanMove0
-    cdef np.ndarray[DTYPE_t] pRChoice0
-    cdef np.ndarray[DTYPE_INT_t] indRChoice0
-    cdef np.ndarray[DTYPE_INT_t] rChoiceReadyC0
-    cdef np.ndarray[DTYPE_INT_t] rChoiceReadyModel0
     cdef np.ndarray[DTYPE_INT_t] error0
     cdef int * gameStatePointer0
     cdef double * vPointer0
@@ -63,10 +58,6 @@ cpdef playMatch():
     cdef int * isCReadyForHumanPointer0
     cdef int * isHumanReadyPointer0
     cdef int * humanMovePointer0
-    cdef double * pRChoicePointer0
-    cdef int * indRChoicePointer0
-    cdef int * rChoiceReadyCPointer0
-    cdef int * rChoiceReadyModelPointer0
     cdef int * errorPointer0
     
     gameState0 = np.zeros((BATCH_SIZE*NUM_CHANNELS*NUM_ROWS*NUM_COLS), dtype=DTYPE_INT)
@@ -77,10 +68,6 @@ cpdef playMatch():
     isCReadyForHuman0 = np.zeros((1), dtype = DTYPE_INT)
     isHumanReady0 = np.zeros((1), dtype = DTYPE_INT)
     humanMove0 = np.zeros((1), dtype = DTYPE_INT)
-    pRChoice0 = np.zeros((NUM_MOVES), dtype = DTYPE)
-    indRChoice0 = np.zeros((1), dtype = DTYPE_INT)
-    rChoiceReadyC0 = np.zeros((1), dtype = DTYPE_INT)
-    rChoiceReadyModel0 = np.zeros((1), dtype = DTYPE_INT)
     error0 = np.zeros((1), dtype=DTYPE_INT)
     gameStatePointer0 = <int *> gameState0.data
     vPointer0 = <double *> v0.data
@@ -90,13 +77,9 @@ cpdef playMatch():
     isCReadyForHumanPointer0 = <int*>isCReadyForHuman0.data
     isHumanReadyPointer0 = <int*>isHumanReady0.data
     humanMovePointer0 = <int*>humanMove0.data
-    pRChoicePointer0 = <double*>pRChoice0.data
-    indRChoicePointer0 = <int*>indRChoice0.data
-    rChoiceReadyCPointer0 = <int*>rChoiceReadyC0.data
-    rChoiceReadyModelPointer0 = <int*>rChoiceReadyModel0.data
     errorPointer0 = <int *> error0.data
     
-    thread0 = threading.Thread(target=runPlayMatchC, args=(400, gameState0, v0, p0, isCReady0, isModelReady0, isCReadyForHuman0, isHumanReady0, humanMove0, pRChoice0, indRChoice0, rChoiceReadyC0, rChoiceReadyModel0, error0))
+    thread0 = threading.Thread(target=runPlayMatchC, args=(400, gameState0, v0, p0, isCReady0, isModelReady0, isCReadyForHuman0, isHumanReady0, humanMove0, error0))
     thread0.start()
     
     cdef int readMove
@@ -113,7 +96,7 @@ cpdef playMatch():
             isCReadyPointer0[0] = 0
             isModelReadyPointer0[0] = 1
         if isCReadyForHumanPointer0[0] == 1:
-            readMove = int(input("What is your age? "))
+            readMove = int(input("What is your move? "))
             humanMovePointer0[0] = readMove
             isCReadyForHumanPointer0[0] = 0
             isHumanReadyPointer0[0] = 1
@@ -123,12 +106,10 @@ cpdef playMatch():
 cdef runPlayMatchC(int numSimulations, np.ndarray[DTYPE_INT_t] gameState, np.ndarray[DTYPE_t] v, np.ndarray[DTYPE_t] p,
 np.ndarray[DTYPE_INT_t] isCReady, np.ndarray[DTYPE_INT_t] isModelReady,
 np.ndarray[DTYPE_INT_t] isCReadyForHuman, np.ndarray[DTYPE_INT_t] isHumanReady, np.ndarray[DTYPE_INT_t] humanMove,
-np.ndarray[DTYPE_t] pRChoice, np.ndarray[DTYPE_INT_t] indRChoice, np.ndarray[DTYPE_INT_t] rChoiceReadyC, np.ndarray[DTYPE_INT_t] rChoiceReadyModel,
 np.ndarray[DTYPE_INT_t] error):
     playMatchCython(numSimulations, <int *> gameState.data, <double *> v.data, <double *> p.data,
     <int *> isCReady.data, <int *> isModelReady.data,
     <int *> isCReadyForHuman.data, <int *> isHumanReady.data, <int *> humanMove.data,
-    <double *> pRChoice.data, <int *> indRChoice.data, <int *> rChoiceReadyC.data, <int *> rChoiceReadyModel.data,
     <int *> error.data)
 ###########################################################################
 cpdef selfPlayFull():
@@ -148,7 +129,7 @@ cpdef selfPlayFull():
         temp = temp + 1
 
 cpdef selfPlay(model, int gameNumber):
-    //model = load_model('./models/model.h5', custom_objects={'softmax_cross_entropy_with_logits': softmax_cross_entropy_with_logits})
+    #model = load_model('./models/model.h5', custom_objects={'softmax_cross_entropy_with_logits': softmax_cross_entropy_with_logits})
 
     cdef np.ndarray[DTYPE_INT_t] gameState0
     cdef np.ndarray[DTYPE_t] v0

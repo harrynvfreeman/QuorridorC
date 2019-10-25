@@ -154,6 +154,7 @@ void clearNode(Node * node);
 void clearNodeSingle(Node * node);
 void play(Tree * tree, double * pRChoice, int * indRChoice, int * rChoiceReadyC, int * rChoiceReadyModel);
 void playHuman(Tree * tree, int move);
+void playAgainstHuman(Tree * tree);
 
 //from play
 void search(int numSimulations, Tree * tree);
@@ -162,7 +163,6 @@ void searchCython(int numSimulations, Tree * tree, int * gameState, double * v, 
 void playMatchCython(int numSimulations, int * gameState, double * v, double * p, 
 					int * isCReady, int * isModelReady, 
 					int * isCReadyForHuman, int * isHumanReady, int * humanMove,
-					double * pRChoice, int * indRChoice, int * rChoiceReadyC, int * rChoiceReadyModel,
 					int * error);
 void selfPlayCython(int numSimulations, int * gameState, double * v, double * p, 
 					int * isCReady, int * isModelReady, 

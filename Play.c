@@ -91,7 +91,6 @@ void cFunctionWorking(int threadNum, int * val, int * wait) {
 void playMatchCython(int numSimulations, int * gameState, double * v, double * p, 
 					int * isCReady, int * isModelReady, 
 					int * isCReadyForHuman, int * isHumanReady, int * humanMove,
-					double * pRChoice, int * indRChoice, int * rChoiceReadyC, int * rChoiceReadyModel,
 					int * error) {
 
 	srand(time(NULL));
@@ -109,7 +108,7 @@ void playMatchCython(int numSimulations, int * gameState, double * v, double * p
 	render(tree->rootNode->state, 1);
 	while(tree->rootNode->state->isGameOver == 0) {
 		searchCython(numSimulations, tree, gameState, v, p, isCReady, isModelReady, error);
-		play(tree, pRChoice, indRChoice, rChoiceReadyC, rChoiceReadyModel);
+		playAgainstHuman(tree);
 		render(tree->rootNode->state, 1);
 		if (tree->rootNode->state->isGameOver == 0) {
 			*(isHumanReady) = 0;
