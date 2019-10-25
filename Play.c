@@ -94,7 +94,7 @@ void playMatchCython(int numSimulations, int * gameState, double * v, double * p
 					int * error) {
 
 	srand(time(NULL));
-	//Py_BEGIN_ALLOW_THREADS
+	Py_BEGIN_ALLOW_THREADS
 	
 	struct timespec tm1,tm2;
 	tm1.tv_sec = 0;                                                            
@@ -124,7 +124,7 @@ void playMatchCython(int numSimulations, int * gameState, double * v, double * p
 	//Not freeing right now, will have to
 	printf("Winner is: %d \n", tree->rootNode->state->winner);
 	
-	//Py_END_ALLOW_THREADS
+	Py_END_ALLOW_THREADS
 }
 
 void selfPlayCython(int numSimulations, int * gameState, double * v, double * p, 
