@@ -7,11 +7,11 @@ from loss import softmax_cross_entropy_with_logits
 
 #To change model learning rate
 #from keras import backend as K
-#K.set_value(model.optimizer.lr, 0.001)
+#K.set_value(model.optimizer.lr, 0.01)
 #K.get_value(model.optimizer.lr)
 
 regConstant = 0.0001
-learningRate = 0.001
+learningRate = 0.01
 momentum = 0.9
 #momentum = 1
 inputShape = (17,17,29)
