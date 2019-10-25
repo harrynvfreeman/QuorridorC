@@ -33,7 +33,7 @@ def train(model):
     #model = load_model('./models/model.h5', custom_objects={'softmax_cross_entropy_with_logits': softmax_cross_entropy_with_logits})
     #NOT Doing model.save('./depModels/' + modelName + '-' + datetime.now().strftime("%d-%b-%Y-%H-%M-%S-%f") + '.h5')
     
-    model.fit(gameStates, y, batch_size=32, epochs=100)
+    model.fit(gameStates, y, batch_size=32, epochs=50)
     
     model.save('./models/model.h5')
     newVersion = version + 1
