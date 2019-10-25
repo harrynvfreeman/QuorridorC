@@ -189,7 +189,7 @@ cpdef selfPlay(model, int gameNumber):
     rChoiceReadyModelPointer0 = <int*>rChoiceReadyModel0.data
     errorPointer0 = <int *> error0.data
     
-    thread0 = threading.Thread(target=runSelfPlayC, args=(400, gameState0, v0, p0, isCReady0, isModelReady0, numTurns0, gameStateOut0, vOut0, piOut0, pRChoice0, indRChoice0, rChoiceReadyC0, rChoiceReadyModel0, error0))
+    thread0 = threading.Thread(target=runSelfPlayC, args=(200, gameState0, v0, p0, isCReady0, isModelReady0, numTurns0, gameStateOut0, vOut0, piOut0, pRChoice0, indRChoice0, rChoiceReadyC0, rChoiceReadyModel0, error0))
     
     thread0.start()
     
