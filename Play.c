@@ -7,19 +7,18 @@
 #include <unistd.h> 
 #include <time.h>
 
-void searchCython(int numSimulations, Tree * tree, int * gameState, double * v, 
-					double * p, int * isCReady, int * isModelReady, int * error) {
-	struct timespec tm1,tm2;
-	tm1.tv_sec = 0;                                                            
-    tm1.tv_nsec = 1000;
-	Node ** nodes = (Node**)malloc(BATCH_SIZE*sizeof(Node*));
-	double * vCopy = (double*)malloc(sizeof(double));
-	double * pCopy = (double*)malloc(NUM_MOVES*sizeof(double));
+void searchCython(int numSimulations, Tree * tree, int * gameState, float * v, 
+					float * pType, float * pMove, float * pBlock, 
+					int * isCReady, int * isModelReady, 
+					int * numChildren, float * dirichlet, int * diriCReady, int * diriModelReady,
+					int * error,
+					struct timespec * tm1, struct timespec * tm2, Node ** nodes) {
 	int i = 0;
 	int safety = 0;
 	while (i < numSimulations && safety < 1000) {
 		for (int b = 0; b < BATCH_SIZE; ++b) {
-			*(nodes+b) = selectMCTS(tree->rootNode);
+			*(nodes+b) = selectMCTS(tree->rootNode, numChildren, dirichlet, diriCReady, diriModelReady,
+									tm1, tm2);
 			memcpy(gameState + b*NUM_CHANNELS*NUM_ROWS*NUM_COLS, (*(nodes+b))->state->gameState, NUM_ROWS*NUM_COLS*NUM_CHANNELS*sizeof(int));
 		}
 		*(isModelReady) = 0;
@@ -27,50 +26,43 @@ void searchCython(int numSimulations, Tree * tree, int * gameState, double * v,
 		while (*(isModelReady) == 0) {
 			//Py_BEGIN_ALLOW_THREADS MAY NEED THIS
 			//sleep(1);
-			nanosleep(&tm1,&tm2);
+			nanosleep(tm1,tm2);
 			//Py_END_ALLOW_THREADS MAY NEED THIS
 		}
 		
 		//end states can be hit twice, not sure how I feel about that
 		for (int b = 0; b < BATCH_SIZE; ++b) {
 			if ((*(nodes+b))->numChildren == 0) {
-				memcpy(vCopy, v + b, sizeof(double));
-				memcpy(pCopy, p + b*NUM_MOVES, NUM_MOVES*sizeof(double));
-				expandAndEvaluate(*(nodes+b), pCopy);
+				expandAndEvaluate(*(nodes+b), pType + b*NUM_MOVES, pMove + b*NUM_MOVES, pBlock + b*NUM_MOVES);
 				++i;
+				backupCython(*(nodes+b), v + b, 1);
 			} else {
-				*vCopy = 0;
+				*(v + b) = 0;
+				backupCython(*(nodes+b), v + b, 0);
 			}
-			backupCython(*(nodes+b), vCopy);
 			++safety;
 		}
 	}
-	free(nodes);
-	nodes = NULL;
-	free(vCopy);
-	vCopy = NULL;
-	free(pCopy);
-	pCopy = NULL;
 }
 
-void search(int numSimulations, Tree * tree) {
-	double * p = (double*)malloc(NUM_MOVES*sizeof(double));
-	for (int i = 0; i < numSimulations; i++) {
-		//printf("Selecting \n");
-		Node * node = selectMCTS(tree->rootNode);
-		double v = ((double)rand())/((double)RAND_MAX/2) - 1;
-		for (int i = 0; i < NUM_MOVES; i++) {
-			*(p+i) = ((double)rand())/RAND_MAX;
-		}
-		//printf("Expanding \n");
-		expandAndEvaluate(node, p);
-		//printf("Backing \n");
-		backup(node, v);
-	}
-	
-	free(p);
-	p = NULL;
-}
+// void search(int numSimulations, Tree * tree) {
+// 	float * p = (float*)malloc(NUM_MOVES*sizeof(float));
+// 	for (int i = 0; i < numSimulations; i++) {
+// 		//printf("Selecting \n");
+// 		Node * node = selectMCTS(tree->rootNode);
+// 		float v = ((float)rand())/((float)RAND_MAX/2) - 1;
+// 		for (int i = 0; i < NUM_MOVES; i++) {
+// 			*(p+i) = ((float)rand())/RAND_MAX;
+// 		}
+// 		//printf("Expanding \n");
+// 		expandAndEvaluate(node, p);
+// 		//printf("Backing \n");
+// 		backup(node, v);
+// 	}
+// 	
+// 	free(p);
+// 	p = NULL;
+// }
 
 void cFunctionWorking(int threadNum, int * val, int * wait) {	
 	struct timespec tm1,tm2;
@@ -88,7 +80,7 @@ void cFunctionWorking(int threadNum, int * val, int * wait) {
 	printf("Wait is %d for thread %d \n", *(wait), threadNum);
 }
 
-void playMatchCython(int numSimulations, int * gameState, double * v, double * p, 
+void playMatchCython(int numSimulations, int * gameState, float * v, float * p, 
 					int * isCReady, int * isModelReady, 
 					int * isCReadyForHuman, int * isHumanReady, int * humanMove,
 					int * error) {
@@ -107,7 +99,7 @@ void playMatchCython(int numSimulations, int * gameState, double * v, double * p
 	
 	render(tree->rootNode->state, 1);
 	while(tree->rootNode->state->isGameOver == 0) {
-		searchCython(numSimulations, tree, gameState, v, p, isCReady, isModelReady, error);
+		//searchCython(numSimulations, tree, gameState, v, p, p, p, isCReady, isModelReady, error);
 		playAgainstHuman(tree);
 		render(tree->rootNode->state, 1);
 		if (tree->rootNode->state->isGameOver == 0) {
@@ -127,10 +119,12 @@ void playMatchCython(int numSimulations, int * gameState, double * v, double * p
 	Py_END_ALLOW_THREADS
 }
 
-void selfPlayCython(int numSimulations, int * gameState, double * v, double * p, 
+void selfPlayCython(int numSimulations, int * gameState, float * v, 
+					float * pType, float * pMove, float * pBlock, 
 					int * isCReady, int * isModelReady, 
-					int * numTurns, int * gameStateOut, double * vOut, double * piOut,
-					double * pRChoice, int * indRChoice, int * rChoiceReadyC, int * rChoiceReadyModel,
+					int * numTurns, int * gameStateOut, float * vOut, float * piOut,
+					float * pRChoice, int * indRChoice, int * rChoiceReadyC, int * rChoiceReadyModel,
+					int * numChildren, float * dirichlet, int * diriCReady, int * diriModelReady,
 					int * error) {
 	srand(time(NULL));
 	//May not want line directly below
@@ -140,13 +134,22 @@ void selfPlayCython(int numSimulations, int * gameState, double * v, double * p,
 	Tree * tree = (Tree*)malloc(sizeof(Tree));
 	tree->rootNode = createNode(qe);
 
+	struct timespec tm1,tm2;
+	tm1.tv_sec = 0;                                                            
+    tm1.tv_nsec = 1000;
+    Node ** nodes = (Node**)malloc(BATCH_SIZE*sizeof(Node*));
 	int stopper = 0;
 	while(tree->rootNode->state->isGameOver == 0 && stopper < 500) {
 		//render(tree->rootNode->state, 1);
-		searchCython(numSimulations, tree, gameState, v, p, isCReady, isModelReady, error);
+		searchCython(numSimulations, tree, gameState, v, pType, pMove, pBlock, isCReady, isModelReady, 
+					numChildren, dirichlet, diriCReady, diriModelReady, 
+					error, &tm1, &tm2, nodes);
 		play(tree, pRChoice, indRChoice, rChoiceReadyC, rChoiceReadyModel);
 		++stopper;
 	}	
+	
+	free(nodes);
+	nodes = NULL;
 	
 	//render(tree->rootNode->state, 1);
 	if (stopper >= 500) {
@@ -176,7 +179,7 @@ void selfPlayCython(int numSimulations, int * gameState, double * v, double * p,
 			vVal = -1;
 		}
 		*(vOut + count) = vVal;
-		memcpy(piOut + count*NUM_MOVES, node->pi, NUM_MOVES*sizeof(double));
+		memcpy(piOut + count*NUM_MOVES, node->pi, NUM_MOVES*sizeof(float));
 		--count;
 	}
 	

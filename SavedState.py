@@ -7,6 +7,14 @@ class SavedState():
         self.value = value
         #self.env = env
         
+class SavedStateTwo():
+    def __init__(self, gameState, piType, piMove, piBlock, value, move):
+        self.gameState = gameState
+        self.piType = piType
+        self.piMove = piMove
+        self.piBlock = piBlock
+        self.value = value
+        
 class VersionDescriptor():
     def __init__(self, version):
         self.version = version

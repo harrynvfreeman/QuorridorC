@@ -22,8 +22,10 @@ extern const int hash_size;
 
 extern const int NUM_BLOCKS;
 
-extern const double e;
-extern const double Cpuct;
+extern const float e;
+extern const float Cpuct;
+
+struct timespec;
 
 //structs
 typedef struct Player Player;
@@ -88,15 +90,15 @@ struct Node {
 	int numChildren;
 	Node * parent;
 	int hasParent;
-	double * pi;
+	float * pi;
 	
 	//from Actions
 	//treating this as the child
-	double N;
-	double W;
-	double Q;
-	double P;
-	double vLoss; //vLoss leading to this
+	float N;
+	float W;
+	float Q;
+	float P;
+	float vLoss; //vLoss leading to this
 	//Node * parent;
 	int move; //move that lead to this
 };
@@ -145,35 +147,37 @@ void clearQE(QE * qe);
 
 //from MCTS.c
 Node * createNode(QE * state);
-Node * createChild(Node * parent, QE * state, int move, double p);
-Node * selectMCTS(Node * rootNode);
-void expandAndEvaluate(Node * node, double * p);
-void backup(Node * origNode, double v);
-void backupCython(Node * origNode, double * v);
+Node * createChild(Node * parent, QE * state, int move, float p);
+Node * selectMCTS(Node * rootNode, int * numChildren, float * dirichlet, 
+				int * diriCReady, int * diriModelReady, struct timespec * tm1, struct timespec * tm2);
+void expandAndEvaluate(Node * node, float * pType, float * pMove, float * pBlock);
+void backup(Node * origNode, float v);
+void backupCython(Node * origNode, float * v, int shouldUpdateN);
 void clearNode(Node * node);
 void clearNodeSingle(Node * node);
-void play(Tree * tree, double * pRChoice, int * indRChoice, int * rChoiceReadyC, int * rChoiceReadyModel);
+void play(Tree * tree, float * pRChoice, int * indRChoice, int * rChoiceReadyC, int * rChoiceReadyModel);
 void playHuman(Tree * tree, int move);
 void playAgainstHuman(Tree * tree);
 
 //from play
-void search(int numSimulations, Tree * tree);
+//void search(int numSimulations, Tree * tree);
 //void selfPlay(int numSimulations, Tree * tree);
-void searchCython(int numSimulations, Tree * tree, int * gameState, double * v, double * p, int * isCReady, int * isModelReady, int * error);
-void playMatchCython(int numSimulations, int * gameState, double * v, double * p, 
+void playMatchCython(int numSimulations, int * gameState, float * v, float * p, 
 					int * isCReady, int * isModelReady, 
 					int * isCReadyForHuman, int * isHumanReady, int * humanMove,
 					int * error);
-void selfPlayCython(int numSimulations, int * gameState, double * v, double * p, 
+void selfPlayCython(int numSimulations, int * gameState, float * v, 
+					float * pType, float * pMove, float * pBlock, 
 					int * isCReady, int * isModelReady, 
-					int * numTurns, int * gameStateOut, double * vOut, double * piOut,
-					double * pRChoice, int * indRChoice, int * rChoiceReadyC, int * rChoiceReadyModel,
+					int * numTurns, int * gameStateOut, float * vOut, float * piOut,
+					float * pRChoice, int * indRChoice, int * rChoiceReadyC, int * rChoiceReadyModel,
+					int * numChildren, float * dirichlet, int * diriCReady, int * diriModelReady,
 					int * error);
 
 void cFunctionWorking(int threadNum, int * val, int * wait);
 
 //from random_real
-double
+float
 random_real(void);
 
 #endif

@@ -21,16 +21,20 @@ def train(model):
     #timeStamp = 'positionsBeingProcessed-0-25-Oct-2019-04-30-51-754982'
     #numFiles = 6000
     gameStates = np.zeros((numFiles, 17, 17, 29))
-    pis = np.zeros((numFiles, 140))
+    piTypes = np.zeros((numFiles, 2))
+    piMoves = np.zeros((numFiles, 12))
+    piBlocks = np.zeros((numFiles, 128))
     values = np.zeros((numFiles, 1))
     count = 0
     for file in glob('./' + timeStamp + '/position*'):
         savedState = readSavedState(file)
         gameStates[count] = savedState.gameState
-        pis[count] = savedState.pi
+        piTypes[count] = savedState.piType
+        piMoves[count] = savedState.piMove
+        piBlocks[count] = savedState.piBlock
         values[count] = savedState.value
     
-    y = {'valueHead' : values, 'policyHead': pis}
+    y = {'valueHead' : values, 'policyTypeHead': piTypes, 'policyMoveHead': piMoves, 'policyBlockHead': piBlocks}
     #model = load_model('./models/model.h5', custom_objects={'softmax_cross_entropy_with_logits': softmax_cross_entropy_with_logits})
     #NOT Doing model.save('./depModels/' + modelName + '-' + datetime.now().strftime("%d-%b-%Y-%H-%M-%S-%f") + '.h5')
     

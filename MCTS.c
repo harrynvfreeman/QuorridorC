@@ -19,12 +19,12 @@ Node * createNode(QE * state) {
 	node->P = 0;
 	node->vLoss = 0;
 	node->move = -1;
-	node->pi = (double*)calloc(NUM_MOVES, sizeof(double));
+	node->pi = (float*)calloc(NUM_MOVES, sizeof(float));
 	
 	return node;
 }
 
-Node * createChild(Node * parent, QE * state, int move, double p) {
+Node * createChild(Node * parent, QE * state, int move, float p) {
 	Node * child = createNode(state);
 	child->parent = parent;
 	child->hasParent = 1;
@@ -92,12 +92,12 @@ void clearNodeSingle(Node * node) {
 //can remove parent removal if we want to debug
 //actually I am going to keep the parent so I can keep the history
 void playButDoesNotWorkIdkWhy(Tree * tree) {	
-	double pi;
-	double piSum = 0;
+	float pi;
+	float piSum = 0;
 	
 	Node * node = tree->rootNode;
 	
-	double r = ((double)rand())/((double)(RAND_MAX));
+	float r = ((float)rand())/((float)(RAND_MAX));
 	
 	int index = 0;
 	int move = -1;
@@ -157,7 +157,7 @@ void playHuman(Tree * tree, int move) {
 
 void playAgainstHuman(Tree * tree) {
 	Node * node = tree->rootNode;
-	double maxVal = 0;
+	float maxVal = 0;
 	int maxInd = 0;
 	for (int i = 0; i < node->numChildren; ++i) {
 		Node * child = *(node->children + i);
@@ -180,19 +180,19 @@ void playAgainstHuman(Tree * tree) {
 	
 }
 
-void play(Tree * tree, double * pRChoice, int * indRChoice, int * rChoiceReadyC, int * rChoiceReadyModel) {
+void play(Tree * tree, float * pRChoice, int * indRChoice, int * rChoiceReadyC, int * rChoiceReadyModel) {
 	//int r = rand() % tree->rootNode->numChildren;
 	//tree->rootNode = *(tree->rootNode->children + r);
 	
-	double pi;
-	//double piSum = 0;
+	float pi;
+	float piSum = 0;
 	
 	Node * node = tree->rootNode;
 	
-	//double r = ((double)rand())/((double)(RAND_MAX));
+	//float r = ((float)rand())/((float)(RAND_MAX));
 	//printf("r is: %f \n", r);
 	
-	double N = 0;
+	float N = 0;
 	for (int i = 0; i < node->numChildren; ++i) {
 		N = N + (*(node->children + i))->N;
 	}
@@ -212,17 +212,17 @@ void play(Tree * tree, double * pRChoice, int * indRChoice, int * rChoiceReadyC,
 // 	}
 	
 	//int finalIndex = -1;	
- 	//printf("Node N is: %f \n", node->N);
- 	//printf("Node children is: %d \n", node->numChildren);
- 	//printf("Child N's are: ");
- 	memset(pRChoice, 0, NUM_MOVES*sizeof(double));
+ 	printf("Node N is: %f \n", node->N);
+ 	printf("Node children is: %d \n", node->numChildren);
+ 	printf("Child N's are: ");
+ 	memset(pRChoice, 0, NUM_MOVES*sizeof(float));
 	for (int index = 0; index < node->numChildren; ++index) {
 		Node * child = *(node->children + index);
-		//printf("%f, ", child->N);
+		printf("%f, ", child->N);
 		pi = child->N / N;
 		*(node->pi + child->move) = pi;
 		*(pRChoice + index) = pi;
-		//piSum = piSum + pi; //moved out here for debugging, can move back in
+		piSum = piSum + pi; //moved out here for debugging, can move back in
 		//printf("PSum is now: %f \n", piSum);
 		//if (finalIndex == -1) {
 			//piSum = piSum + pi;
@@ -231,13 +231,13 @@ void play(Tree * tree, double * pRChoice, int * indRChoice, int * rChoiceReadyC,
 			//}
 		//}
 	}
- 	//printf("\n");
- 	//printf("PiSum is: %f \n", piSum);
- 	//printf("Pi is: ");
- 	//for (int i = 0; i < NUM_MOVES; i++) {
- 	//	printf("(%d, %f, %d), ", i, *(node->pi + i), validate(node->state, i));
- 	//}
- 	//printf("\n");
+ 	printf("\n");
+ 	printf("PiSum is: %f \n", piSum);
+ 	printf("Pi is: ");
+ 	for (int i = 0; i < NUM_MOVES; i++) {
+ 	printf("(%d, %f, %d), ", i, *(node->pi + i), validate(node->state, i));
+ 	}
+ 	printf("\n");
 	
 	
 	
@@ -276,12 +276,12 @@ void testPlayThisWorksNoClear(Tree * tree) {
 	//int r = rand() % tree->rootNode->numChildren;
 	//tree->rootNode = *(tree->rootNode->children + r);
 	
-	double pi;
-	double piSum = 0;
+	float pi;
+	float piSum = 0;
 	
 	Node * node = tree->rootNode;
 	
-	double r = ((double)rand())/((double)(RAND_MAX));
+	float r = ((float)rand())/((float)(RAND_MAX));
 	
 	int index = 0;
 	int found = 0;
@@ -301,7 +301,7 @@ void testPlayThisWorksNoClear(Tree * tree) {
 	tree->rootNode = nextRootNode;
 }
 
-void backup(Node * origNode, double v) {
+void backup(Node * origNode, float v) {
 	Node * node = origNode;
 	while(node->hasParent == 1) {
 		node->vLoss = node->vLoss - 1;
@@ -317,12 +317,12 @@ void backup(Node * origNode, double v) {
 // 	}
 }
 
-void backupCython(Node * origNode, double * v) {
+void backupCython(Node * origNode, float * v, int shouldUpdateN) {
 	Node * node = origNode;
 	while(node->hasParent == 1) {
 		node->vLoss = node->vLoss - 1;
 		node->W = node->W + *v;
-		node->N = node->N + 1; //if remove then uncomment in search
+		node->N = node->N + shouldUpdateN; //if remove then uncomment in search
 		node->Q = (node->W - node->vLoss) / (node->N);
 		node = node->parent;
 	}
@@ -334,19 +334,28 @@ void backupCython(Node * origNode, double * v) {
 }
 
 //should probability be summed before or after valid moves
-void expandAndEvaluate(Node * node, double * p) {
-	double pSum = 0;
+void expandAndEvaluate(Node * node, float * pType, float * pMove, float * pBlock) {
+	float pSum = 0;
 	int * validMoves = (int*)calloc(NUM_MOVES, sizeof(int));
+	float * p = (float*)malloc(NUM_MOVES*sizeof(float));
+	*(pType) = expf(*(pType));
+	*(pType + 1) = expf(*(pType + 1));
 	
-	for (int i = 0; i < NUM_MOVES; ++i) {
+	for (int i = 0; i < 12; ++i) {
 		if (validate(node->state, i) == 1) {
-			*(p + i) = expf(*(p+i));
+			*(p + i) = expf(*(pMove+i)) * (*(pType));
 			pSum = pSum + *(p+i);
 			*(validMoves + i) = 1;
-		} //else {
-			//may not need this below, but throwing in in case
-			//*(p + i) = 0;
-		//}
+		} 
+	}
+	
+	for (int i = 12; i < NUM_MOVES; ++i) {
+		if (validate(node->state, i) == 1) {
+			*(p + i) = expf(*(pBlock+i)) * (*(pType + 1));
+			pSum = pSum + *(p+i);
+			*(validMoves + i) = 1;
+		}
+	
 	}
 	
 	for (int i = 0; i < NUM_MOVES; ++i) {
@@ -357,40 +366,35 @@ void expandAndEvaluate(Node * node, double * p) {
 		}
 	}
 	
+	free(p);
 	free(validMoves);
+	p = NULL;
 	validMoves = NULL;
 }
 
-Node * selectMCTS(Node * rootNode) {
+Node * selectMCTS(Node * rootNode, int * numChildren, float * dirichlet, 
+				int * diriCReady, int * diriModelReady, struct timespec * tm1, struct timespec * tm2) {
 	Node * node = rootNode;
 	while (node->numChildren > 0) {
-		//printf("Step0 \n");
-		//Simulate dirichlet noise.  
-		//double * dirichlet = (double*)calloc(node->numChildren, sizeof(double));
-		//int r = rand()%(node->numChildren);
-		int diri = rand()%(node->numChildren);
-		double diriVal;
 		
 		int index = rand() % (node->numChildren);
 		Node * child = *(node->children + index);
 		//printf("%d \n", node->numChildren);
-		double Q = child->Q;
-		double N;
-		double P;
+		float Q = child->Q;
+		float N;
+		float P;
 		
 		if (node->hasParent == 1) {
 			P = child->P;
 			N = node->N;
 		} else {
-			//*(dirichlet + r) = 1;
-			//P = (1-e)*(child->P) + e*(*(dirichlet + index));
-			if (diri == index) {
-				diriVal = 0.9;
-			} else {
-				diriVal = 0.1;
+			*numChildren = node->numChildren;
+			*(diriModelReady) = 0;
+			*(diriCReady) = 1;
+			while (*(diriModelReady) == 0) {
+				nanosleep(tm1,tm2);
 			}
-			//P = (1-e)*(child->P) + e*(*(dirichlet + index));
-			P = (1-e)*(child->P) + e*diriVal;
+			P = (1-e)*(child->P) + e*(*(dirichlet + index));
 			
 			N = 0;
 			for (int i = 0; i < node->numChildren; i++) {
@@ -398,8 +402,8 @@ Node * selectMCTS(Node * rootNode) {
 			}
 			
 		}
-		double U = Cpuct * P * sqrtf(N) / (child->N + 1);
-		double maxVal = Q + U;
+		float U = Cpuct * P * sqrtf(N) / (child->N + 1);
+		float maxVal = Q + U;
 		Node * maxChild = child;
 		for (int i = 1; i < node->numChildren; ++i) {
 			index = (index + 1) % node->numChildren;
@@ -411,13 +415,7 @@ Node * selectMCTS(Node * rootNode) {
 			if (node->hasParent == 1) {
 				P = child->P;
 			} else {
-				//P = (1-e)*(child->P) + e*(*(dirichlet + index));
-				if (diri == index) {
-					diriVal = 0.9;
-				} else {
-					diriVal = 0.1;
-				}
-				P = (1-e)*(child->P) + e*diriVal;
+				P = (1-e)*(child->P) + e*(*(dirichlet + index));
 			}
 			
 			U = Cpuct * P * sqrtf(N) / (child->N + 1);

@@ -7,7 +7,7 @@ from loss import softmax_cross_entropy_with_logits
 
 #To change model learning rate
 #from keras import backend as K
-#K.set_value(model.optimizer.lr, 0.01)
+#K.set_value(model.optimizer.lr, 0.001)
 #K.get_value(model.optimizer.lr)
 
 regConstant = 0.0001
@@ -48,8 +48,10 @@ def policyHead(x):
   b = BatchNormalization()(a)
   c = LeakyReLU()(b)
   d = Flatten()(c)
-  y = Dense(outputShape, name = 'policyHead', kernel_regularizer = regularizers.l2(regConstant), bias_initializer='random_uniform')(d)
-  return y
+  y0 = Dense(2, name = 'policyTypeHead', kernel_regularizer = regularizers.l2(regConstant), bias_initializer='random_uniform')(d)
+  y1 = Dense(12, name = 'policyMoveHead', kernel_regularizer = regularizers.l2(regConstant), bias_initializer='random_uniform')(d)
+  y2 = Dense(outputShape-12, name = 'policyBlockHead', kernel_regularizer = regularizers.l2(regConstant), bias_initializer='random_uniform')(d)
+  return y0, y1, y2
 
 def buildNetwork(x, numRes = 10):
   a = convLayer(x);
@@ -57,19 +59,21 @@ def buildNetwork(x, numRes = 10):
     a = residualLayer(a)
   
   value = valueHead(a)
-  policy = policyHead(a)
-  return value, policy
+  policy_move_type, policy_move, policy_block = policyHead(a)
+  return value, policy_move_type, policy_move, policy_block
 
 def buildModel():
   a = Input(shape=inputShape)
-  value, policy = buildNetwork(a)
+  value, policy_move_type, policy_move, policy_block = buildNetwork(a)
   
   losses = {
     "valueHead": "mean_squared_error",
-    "policyHead": softmax_cross_entropy_with_logits,
+    "policyTypeHead": softmax_cross_entropy_with_logits,
+    "policyMoveHead": softmax_cross_entropy_with_logits,
+    "policyBlockHead": softmax_cross_entropy_with_logits,
   }
-  lossWeights = {"valueHead": 1, "policyHead": 1}
+  lossWeights = {"valueHead": 1, "policyTypeHead": 1/3, "policyMoveHead": 1/3, "policyBlockHead": 1/3}
 
-  model = Model(inputs = [a], outputs = [value, policy])
+  model = Model(inputs = [a], outputs = [value, policy_move_type, policy_move, policy_block])
   model.compile(optimizer=SGD(lr=learningRate, momentum = momentum), loss=losses, loss_weights=lossWeights)
   return model
