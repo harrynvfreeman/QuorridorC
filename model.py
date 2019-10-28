@@ -72,7 +72,7 @@ def buildModel():
     "policyMoveHead": softmax_cross_entropy_with_logits,
     "policyBlockHead": softmax_cross_entropy_with_logits,
   }
-  lossWeights = {"valueHead": 3, "policyTypeHead": 1, "policyMoveHead": 1, "policyBlockHead": 1}
+  lossWeights = {"valueHead": 1, "policyTypeHead": 1, "policyMoveHead": 1, "policyBlockHead": 1}
 
   model = Model(inputs = [a], outputs = [value, policy_move_type, policy_move, policy_block])
   model.compile(optimizer=SGD(lr=learningRate, momentum = momentum), loss=losses, loss_weights=lossWeights)
