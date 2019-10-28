@@ -148,10 +148,11 @@ void selfPlayCython(int numSimulations, int * gameState, float * v,
 		play(tree, pRChoice, indRChoice, rChoiceReadyC, rChoiceReadyModel);
 		++stopper;
 	}	
+	printf("Select end \n");
 	
 	free(nodes);
 	nodes = NULL;
-	
+	printf("Select end2 \n");
 	//render(tree->rootNode->state, 1);
 	if (stopper >= 500) {
 		printf("SOMETHING WENT WRONG UH OH");
@@ -187,7 +188,6 @@ void selfPlayCython(int numSimulations, int * gameState, float * v,
 	clearNodeSingle(node);
 	free(tree);
 	tree = NULL;
-	printf("Select end \n");
 	Py_END_ALLOW_THREADS
 	//May not want line directly above
 }
