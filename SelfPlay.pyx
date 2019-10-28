@@ -128,7 +128,7 @@ cpdef selfPlayFull():
         temp = temp + 1
 
 cpdef selfPlay(model, int gameNumber):
-    #model = load_model('./models/model.h5', custom_objects={'softmax_cross_entropy_with_logits': softmax_cross_entropy_with_logits})
+    model = load_model('./models/model.h5', custom_objects={'softmax_cross_entropy_with_logits': softmax_cross_entropy_with_logits})
 
     cdef np.ndarray[DTYPE_INT_t] gameState0
     cdef np.ndarray[DTYPE_t] v0
@@ -247,20 +247,20 @@ cpdef selfPlay(model, int gameNumber):
     
     gameStateOutReshape = np.transpose(np.reshape(gameStateOut0, [MAX_TURNS, NUM_CHANNELS, NUM_ROWS, NUM_COLS]), (0, 2, 3, 1))
     piOutReshape = np.reshape(piOut0, [MAX_TURNS, NUM_MOVES])
-    if vOut0[0] == 0:
-        drawDescriptor = readSavedState("./models/draw")
-        drawDescriptor.version = drawDescriptor.version + 1
-        writeSavedState(drawDescriptor, "./models/draw")
-    else:
-        winDescriptor = readSavedState("./models/win")
-        winDescriptor.version = winDescriptor.version + 1
-        writeSavedState(winDescriptor, "./models/win")
-    cdef int i
-    for i in range(numTurnsPointer0[0]):
-        pTypeOut = np.array([np.sum(piOutReshape[i, 0:12]), np.sum(piOutReshape[i, 12:])])
-        savedState = SavedStateTwo(gameStateOutReshape[i], pTypeOut, piOutReshape[i, 0:12], piOutReshape[i, 12:], vOut0[i])
-        savePath = "./positionsToBeProcessed/position-" + str(gameNumber) + "-" + datetime.now().strftime("%d-%b-%Y-%H-%M-%S-%f")
-        writeSavedState(savedState, savePath)
+    #if vOut0[0] == 0:
+    #    drawDescriptor = readSavedState("./models/draw")
+    #    drawDescriptor.version = drawDescriptor.version + 1
+    #    writeSavedState(drawDescriptor, "./models/draw")
+    #else:
+    #    winDescriptor = readSavedState("./models/win")
+    #    winDescriptor.version = winDescriptor.version + 1
+    #    writeSavedState(winDescriptor, "./models/win")
+    #cdef int i
+    #for i in range(numTurnsPointer0[0]):
+    #    pTypeOut = np.array([np.sum(piOutReshape[i, 0:12]), np.sum(piOutReshape[i, 12:])])
+    #    savedState = SavedStateTwo(gameStateOutReshape[i], pTypeOut, piOutReshape[i, 0:12], piOutReshape[i, 12:], vOut0[i])
+    #    savePath = "./positionsToBeProcessed/position-" + str(gameNumber) + "-" + datetime.now().strftime("%d-%b-%Y-%H-%M-%S-%f")
+    #    writeSavedState(savedState, savePath)
     
     if errorPointer0[0] == 1:
         print('There was and Error, Investigate')
