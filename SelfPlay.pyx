@@ -258,7 +258,7 @@ cpdef selfPlay(model, int gameNumber):
     cdef int i
     for i in range(numTurnsPointer0[0]):
         pTypeOut = np.array([np.sum(piOutReshape[i, 0:12]), np.sum(piOutReshape[i, 12:])])
-        savedState = SavedStateTwo(gameStateOutReshape[i], pTypeOut, piOutReshape[i, 0:12], piOutReshape[i, 12:], vOut0[i])
+        savedState = SavedStateTwo(gameStateOutReshape[i], pTypeOut, piOutReshape[i, 0:12]/pTypeOut[0], piOutReshape[i, 12:]/pTypeOut[1], vOut0[i])
         savePath = "./positionsToBeProcessed/position-" + str(gameNumber) + "-" + datetime.now().strftime("%d-%b-%Y-%H-%M-%S-%f")
         writeSavedState(savedState, savePath)
     
