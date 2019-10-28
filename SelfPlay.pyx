@@ -244,7 +244,7 @@ cpdef selfPlay(model, int gameNumber):
             indRChoicePointer0[0] = choice
             rChoiceReadyCPointer0[0] = 0
             rChoiceReadyModelPointer0[0] = 1
-        print('Got to here, thread done')
+        print('Got to here, thread done ' + str(gameNumber))
     
     gameStateOutReshape = np.transpose(np.reshape(gameStateOut0, [MAX_TURNS, NUM_CHANNELS, NUM_ROWS, NUM_COLS]), (0, 2, 3, 1))
     piOutReshape = np.reshape(piOut0, [MAX_TURNS, NUM_MOVES])
