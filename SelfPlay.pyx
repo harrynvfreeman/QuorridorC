@@ -257,8 +257,20 @@ cpdef selfPlay(model, int gameNumber):
         writeSavedState(winDescriptor, "./models/win")
     cdef int i
     for i in range(numTurnsPointer0[0]):
-        pTypeOut = np.array([np.sum(piOutReshape[i, 0:12]) + 0.00001, np.sum(piOutReshape[i, 12:]) + 0.00001])
-        savedState = SavedStateTwo(gameStateOutReshape[i], pTypeOut, piOutReshape[i, 0:12]/pTypeOut[0], piOutReshape[i, 12:]/pTypeOut[1], vOut0[i])
+        pMoveOut = np.zeros((12))
+        pBlockOut = np.zeros((NUM_MOVES-12))
+        pTypeOut = np.array([np.sum(piOutReshape[i, 0:12]), np.sum(piOutReshape[i, 12:])])
+        if pTypeOut[0] == 0:
+            pMoveOut[:] = 1/12
+        else:
+            pMoveOut[:] = piOutReshape[i, 0:12]/pTypeOut[0]
+        
+        if pTypeOut[1] == 0:
+            pBlockOut[:] = 1/(NUM_MOVES-12)
+        else:
+            pBlockOut[:] = piOutReshape[i, 12:]/pTypeOut[1]
+            
+        savedState = SavedStateTwo(gameStateOutReshape[i], pTypeOut, pMoveOut, pBlockOut, vOut0[i])
         savePath = "./positionsToBeProcessed/position-" + str(gameNumber) + "-" + datetime.now().strftime("%d-%b-%Y-%H-%M-%S-%f")
         writeSavedState(savedState, savePath)
     
