@@ -373,8 +373,11 @@ void expandAndEvaluate(Node * node, float * pType, float * pMove, float * pBlock
 }
 
 Node * selectMCTS(Node * rootNode, int * numChildren, float * dirichlet, 
-				int * diriCReady, int * diriModelReady, struct timespec * tm1, struct timespec * tm2) {
+				int * diriCReady, int * diriModelReady) {
 	Node * node = rootNode;
+	struct timespec tm1,tm2;
+	tm1.tv_sec = 0;                                                            
+    tm1.tv_nsec = 1000;
 	while (node->numChildren > 0) {
 		
 		int index = rand() % (node->numChildren);
@@ -392,7 +395,7 @@ Node * selectMCTS(Node * rootNode, int * numChildren, float * dirichlet,
 			*(diriModelReady) = 0;
 			*(diriCReady) = 1;
 			while (*(diriModelReady) == 0) {
-				nanosleep(tm1,tm2);
+				nanosleep(&tm1,&tm2);
 			}
 			P = (1-e)*(child->P) + e*(*(dirichlet + index));
 			

@@ -110,7 +110,7 @@ int max(int a, int b) {
 
 void nodeTest0() {
 	Node * root = createNode(NULL);
-	Node * out = selectMCTS(root, NULL, NULL, NULL, NULL, NULL, NULL);
+	Node * out = selectMCTS(root, NULL, NULL, NULL, NULL);
 	
 	if (out == root) {
 		printf("Success \n");
@@ -139,7 +139,7 @@ void nodeTest1() {
 	child1->W = 3;
 	child2->W = 2;
 	
-	Node * out = selectMCTS(root, NULL, NULL, NULL, NULL, NULL, NULL);
+	Node * out = selectMCTS(root, NULL, NULL, NULL, NULL);
 	
 	if (out == child0 && out->vLoss == 1 && out->Q == (float)2/7) {
 		printf("Success 0 \n");

@@ -149,7 +149,7 @@ void clearQE(QE * qe);
 Node * createNode(QE * state);
 Node * createChild(Node * parent, QE * state, int move, float p);
 Node * selectMCTS(Node * rootNode, int * numChildren, float * dirichlet, 
-				int * diriCReady, int * diriModelReady, struct timespec * tm1, struct timespec * tm2);
+				int * diriCReady, int * diriModelReady);
 void expandAndEvaluate(Node * node, float * pType, float * pMove, float * pBlock);
 void backup(Node * origNode, float v);
 void backupCython(Node * origNode, float * v, int shouldUpdateN);

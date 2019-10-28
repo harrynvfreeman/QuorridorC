@@ -11,15 +11,16 @@ void searchCython(int numSimulations, Tree * tree, int * gameState, float * v,
 					float * pType, float * pMove, float * pBlock, 
 					int * isCReady, int * isModelReady, 
 					int * numChildren, float * dirichlet, int * diriCReady, int * diriModelReady,
-					int * error,
-					struct timespec * tm1, struct timespec * tm2) {
+					int * error) {
 	Node ** nodes = (Node**)malloc(BATCH_SIZE*sizeof(Node*));
 	int i = 0;
 	int safety = 0;
+	struct timespec tm1,tm2;
+	tm1.tv_sec = 0;                                                            
+    tm1.tv_nsec = 1000;
 	while (i < numSimulations && safety < 1000) {
 		for (int b = 0; b < BATCH_SIZE; ++b) {
-			*(nodes+b) = selectMCTS(tree->rootNode, numChildren, dirichlet, diriCReady, diriModelReady,
-									tm1, tm2);
+			*(nodes+b) = selectMCTS(tree->rootNode, numChildren, dirichlet, diriCReady, diriModelReady);
 			memcpy(gameState + b*NUM_CHANNELS*NUM_ROWS*NUM_COLS, (*(nodes+b))->state->gameState, NUM_ROWS*NUM_COLS*NUM_CHANNELS*sizeof(int));
 		}
 		*(isModelReady) = 0;
@@ -27,7 +28,7 @@ void searchCython(int numSimulations, Tree * tree, int * gameState, float * v,
 		while (*(isModelReady) == 0) {
 			//Py_BEGIN_ALLOW_THREADS MAY NEED THIS
 			//sleep(1);
-			nanosleep(tm1,tm2);
+			nanosleep(&tm1,&tm2);
 			//Py_END_ALLOW_THREADS MAY NEED THIS
 		}
 		
@@ -138,19 +139,13 @@ void selfPlayCython(int numSimulations, int * gameState, float * v,
 	Tree * tree = (Tree*)malloc(sizeof(Tree));
 	tree->rootNode = createNode(qe);
 
-	struct timespec tm1,tm2;
-	tm1.tv_sec = 0;                                                            
-    tm1.tv_nsec = 1000;
 	int stopper = 0;
 	while(tree->rootNode->state->isGameOver == 0 && stopper < 500) {
-		printf("Select Start \n");
 		//render(tree->rootNode->state, 1);
 		searchCython(numSimulations, tree, gameState, v, pType, pMove, pBlock, isCReady, isModelReady, 
 					numChildren, dirichlet, diriCReady, diriModelReady, 
-					error, &tm1, &tm2);
-		printf("Select End1 \n");
+					error);
 		play(tree, pRChoice, indRChoice, rChoiceReadyC, rChoiceReadyModel);
-		printf("Select End2 \n");
 		++stopper;
 	}	
 	//render(tree->rootNode->state, 1);
