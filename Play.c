@@ -126,7 +126,6 @@ void selfPlayCython(int numSimulations, int * gameState, float * v,
 					float * pRChoice, int * indRChoice, int * rChoiceReadyC, int * rChoiceReadyModel,
 					int * numChildren, float * dirichlet, int * diriCReady, int * diriModelReady,
 					int * error) {
-	printf("Select Start \n");
 	srand(time(NULL));
 	//May not want line directly below
 	Py_BEGIN_ALLOW_THREADS
@@ -141,18 +140,18 @@ void selfPlayCython(int numSimulations, int * gameState, float * v,
     Node ** nodes = (Node**)malloc(BATCH_SIZE*sizeof(Node*));
 	int stopper = 0;
 	while(tree->rootNode->state->isGameOver == 0 && stopper < 500) {
+		printf("Select Start \n");
 		//render(tree->rootNode->state, 1);
 		searchCython(numSimulations, tree, gameState, v, pType, pMove, pBlock, isCReady, isModelReady, 
 					numChildren, dirichlet, diriCReady, diriModelReady, 
 					error, &tm1, &tm2, nodes);
 		play(tree, pRChoice, indRChoice, rChoiceReadyC, rChoiceReadyModel);
 		++stopper;
+		printf("Select End \n");
 	}	
-	printf("Select end \n");
 	
 	free(nodes);
 	nodes = NULL;
-	printf("Select end2 \n");
 	//render(tree->rootNode->state, 1);
 	if (stopper >= 500) {
 		printf("SOMETHING WENT WRONG UH OH");
