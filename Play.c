@@ -13,6 +13,7 @@ void searchCython(int numSimulations, Tree * tree, int * gameState, float * v,
 					int * numChildren, float * dirichlet, int * diriCReady, int * diriModelReady,
 					int * error,
 					struct timespec * tm1, struct timespec * tm2, Node ** nodes) {
+	printf("Search Start \n");
 	int i = 0;
 	int safety = 0;
 	while (i < numSimulations && safety < 1000) {
@@ -43,6 +44,7 @@ void searchCython(int numSimulations, Tree * tree, int * gameState, float * v,
 			++safety;
 		}
 	}
+	printf("Sarch End \n");
 }
 
 // void search(int numSimulations, Tree * tree) {

@@ -375,7 +375,6 @@ void expandAndEvaluate(Node * node, float * pType, float * pMove, float * pBlock
 Node * selectMCTS(Node * rootNode, int * numChildren, float * dirichlet, 
 				int * diriCReady, int * diriModelReady, struct timespec * tm1, struct timespec * tm2) {
 	Node * node = rootNode;
-	printf("Select Start \n");
 	while (node->numChildren > 0) {
 		
 		int index = rand() % (node->numChildren);
@@ -434,6 +433,5 @@ Node * selectMCTS(Node * rootNode, int * numChildren, float * dirichlet,
 		//free(dirichlet);
 		//dirichlet = NULL;
 	}
-	printf("Select End \n");
 	return node;
 }
