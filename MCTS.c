@@ -185,7 +185,7 @@ void play(Tree * tree, float * pRChoice, int * indRChoice, int * rChoiceReadyC, 
 	//tree->rootNode = *(tree->rootNode->children + r);
 	
 	float pi;
-	//float piSum = 0;
+	float piSum = 0;
 	
 	Node * node = tree->rootNode;
 	
@@ -212,17 +212,17 @@ void play(Tree * tree, float * pRChoice, int * indRChoice, int * rChoiceReadyC, 
 // 	}
 	
 	//int finalIndex = -1;	
- 	// printf("Node N is: %f \n", node->N);
-//  	printf("Node children is: %d \n", node->numChildren);
-//  	printf("Child N's are: ");
+ 	printf("Node N is: %f \n", node->N);
+ 	printf("Node children is: %d \n", node->numChildren);
+ 	printf("Child N's are: ");
  	memset(pRChoice, 0, NUM_MOVES*sizeof(float));
 	for (int index = 0; index < node->numChildren; ++index) {
 		Node * child = *(node->children + index);
-		// printf("%f, ", child->N);
+		printf("%f, ", child->N);
 		pi = child->N / N;
 		*(node->pi + child->move) = pi;
 		*(pRChoice + index) = pi;
-		//piSum = piSum + pi; //moved out here for debugging, can move back in
+		piSum = piSum + pi; //moved out here for debugging, can move back in
 		//printf("PSum is now: %f \n", piSum);
 		//if (finalIndex == -1) {
 			//piSum = piSum + pi;
@@ -231,13 +231,13 @@ void play(Tree * tree, float * pRChoice, int * indRChoice, int * rChoiceReadyC, 
 			//}
 		//}
 	}
- 	// printf("\n");
-//  	printf("PiSum is: %f \n", piSum);
-//  	printf("Pi is: ");
-//  	for (int i = 0; i < NUM_MOVES; i++) {
-//  	printf("(%d, %f, %d), ", i, *(node->pi + i), validate(node->state, i));
-//  	}
-//  	printf("\n");
+ 	printf("\n");
+ 	printf("PiSum is: %f \n", piSum);
+ 	printf("Pi is: ");
+ 	for (int i = 0; i < NUM_MOVES; i++) {
+ 	printf("(%d, %f, %d), ", i, *(node->pi + i), validate(node->state, i));
+ 	}
+ 	printf("\n");
 	
 	
 	
