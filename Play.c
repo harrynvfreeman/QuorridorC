@@ -35,7 +35,7 @@ void searchCython(int numSimulations, Tree * tree, int * gameState, float * v,
 		//end states can be hit twice, not sure how I feel about that
 		for (int b = 0; b < BATCH_SIZE; ++b) {
 			if ((*(nodes+b))->numChildren == 0) {
-				expandAndEvaluate(*(nodes+b), pType + b*NUM_MOVES, pMove + b*NUM_MOVES, pBlock + b*NUM_MOVES);
+				expandAndEvaluate(*(nodes+b), pType + b*2, pMove + b*12, pBlock + b*(NUM_MOVES-12));
 				++i;
 				backupCython(*(nodes+b), v + b, 1);
 			} else {
