@@ -351,7 +351,7 @@ void expandAndEvaluate(Node * node, float * pType, float * pMove, float * pBlock
 	
 	for (int i = 12; i < NUM_MOVES; ++i) {
 		if (validate(node->state, i) == 1) {
-			*(p + i) = expf(*(pBlock+i)) * (*(pType + 1));
+			*(p + i) = expf(*(pBlock+i-12)) * (*(pType + 1));
 			pSum = pSum + *(p+i);
 			*(validMoves + i) = 1;
 		}
