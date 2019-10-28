@@ -145,9 +145,10 @@ void selfPlayCython(int numSimulations, int * gameState, float * v,
 		searchCython(numSimulations, tree, gameState, v, pType, pMove, pBlock, isCReady, isModelReady, 
 					numChildren, dirichlet, diriCReady, diriModelReady, 
 					error, &tm1, &tm2, nodes);
+		printf("Select End1 \n");
 		play(tree, pRChoice, indRChoice, rChoiceReadyC, rChoiceReadyModel);
+		printf("Select End2 \n");
 		++stopper;
-		printf("Select End \n");
 	}	
 	
 	free(nodes);
