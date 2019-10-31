@@ -162,9 +162,11 @@ void playAgainstHuman(Tree * tree);
 //from play
 //void search(int numSimulations, Tree * tree);
 //void selfPlay(int numSimulations, Tree * tree);
-void playMatchCython(int numSimulations, int * gameState, float * v, float * p, 
+void playMatchCython(int numSimulations, int * gameState, float * v, 
+					float * pType, float * pMove, float * pBlock, 
 					int * isCReady, int * isModelReady, 
 					int * isCReadyForHuman, int * isHumanReady, int * humanMove,
+					int * numChildren, float * dirichlet, int * diriCReady, int * diriModelReady,
 					int * error);
 void selfPlayCython(int numSimulations, int * gameState, float * v, 
 					float * pType, float * pMove, float * pBlock, 

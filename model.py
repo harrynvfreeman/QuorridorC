@@ -11,7 +11,7 @@ from loss import softmax_cross_entropy_with_logits
 #K.get_value(model.optimizer.lr)
 
 regConstant = 0.0001
-learningRate = 0.001
+learningRate = 0.02
 momentum = 0.9
 #momentum = 1
 inputShape = (17,17,29)

@@ -25,9 +25,11 @@ cdef extern from "Quorridor.h":
     float * pRChoice, int * indRChoice, int * rChoiceReadyC, int * rChoiceReadyModel,
     int * numChildren, float * dirichlet, int * diriCReady, int * diriModelReady,
     int * error)
-    void playMatchCython(int numSimulations, int * gameState, float * v, float * p, 
+    void playMatchCython(int numSimulations, int * gameState, float * v, 
+    float * pType, float * pMove, float * pBlock, 
     int * isCReady, int * isModelReady, 
     int * isCReadyForHuman, int * isHumanReady, int * humanMove,
+    int * numChildren, float * dirichlet, int * diriCReady, int * diriModelReady,
     int * error)
     void cFunctionWorking(int threadNum, int * val, int * wait);
     int NUM_MOVES
@@ -42,43 +44,68 @@ cpdef playMatch():
     
     cdef np.ndarray[DTYPE_INT_t] gameState0
     cdef np.ndarray[DTYPE_t] v0
-    cdef np.ndarray[DTYPE_t] p0
+    cdef np.ndarray[DTYPE_t] pType0
+    cdef np.ndarray[DTYPE_t] pMove0
+    cdef np.ndarray[DTYPE_t] pBlock0
     cdef np.ndarray[DTYPE_INT_t] isCReady0
     cdef np.ndarray[DTYPE_INT_t] isModelReady0
     cdef np.ndarray[DTYPE_INT_t] isCReadyForHuman0
     cdef np.ndarray[DTYPE_INT_t] isHumanReady0
     cdef np.ndarray[DTYPE_INT_t] humanMove0
+    cdef np.ndarray[DTYPE_INT_t] numChildren0
+    cdef np.ndarray[DTYPE_t] dirichlet0
+    cdef np.ndarray[DTYPE_INT_t] diriCReady0
+    cdef np.ndarray[DTYPE_INT_t] diriModelReady0
     cdef np.ndarray[DTYPE_INT_t] error0
     cdef int * gameStatePointer0
     cdef float * vPointer0
-    cdef float * pPointer0
+    cdef float * pTypePointer0
+    cdef float * pMovePointer0
+    cdef float * pBlockPointer0
     cdef int * isCReadyPointer0
     cdef int * isModelReadyPointer0
     cdef int * isCReadyForHumanPointer0
     cdef int * isHumanReadyPointer0
     cdef int * humanMovePointer0
+    cdef int * numChildrenPointer0
+    cdef float * dirichletPointer0
+    cdef int * diriCReadyPointer0
+    cdef int * diriModelREadyPointer0
+    
     cdef int * errorPointer0
     
     gameState0 = np.zeros((BATCH_SIZE*NUM_CHANNELS*NUM_ROWS*NUM_COLS), dtype=DTYPE_INT)
     v0 = np.zeros((BATCH_SIZE), dtype=DTYPE)
-    p0 = np.zeros((BATCH_SIZE*NUM_MOVES), dtype=DTYPE)
+    pType0 = np.zeros((BATCH_SIZE*2), dtype=DTYPE)
+    pMove0 = np.zeros((BATCH_SIZE*12), dtype=DTYPE)
+    pBlock0 = np.zeros((BATCH_SIZE*(NUM_MOVES-12)), dtype=DTYPE)
     isCReady0 = np.zeros((1), dtype=DTYPE_INT)
     isModelReady0 = np.zeros((1), dtype=DTYPE_INT)
     isCReadyForHuman0 = np.zeros((1), dtype = DTYPE_INT)
     isHumanReady0 = np.zeros((1), dtype = DTYPE_INT)
     humanMove0 = np.zeros((1), dtype = DTYPE_INT)
+    numChildren0 = np.zeros((1), dtype = DTYPE_INT)
+    dirichlet0 = np.zeros((NUM_MOVES), dtype = DTYPE)
+    diriCReady0 = np.zeros((1), dtype = DTYPE_INT)
+    diriModelReady0 = np.zeros((1), dtype = DTYPE_INT)
     error0 = np.zeros((1), dtype=DTYPE_INT)
     gameStatePointer0 = <int *> gameState0.data
     vPointer0 = <float *> v0.data
-    pPointer0 = <float *> p0.data
+    pTypePointer0 = <float *> pType0.data
+    pMovePointer0 = <float *> pMove0.data
+    pBlockPointer0 = <float *> pBlock0.data
     isCReadyPointer0 = <int *> isCReady0.data
     isModelReadyPointer0 = <int *> isModelReady0.data
     isCReadyForHumanPointer0 = <int*>isCReadyForHuman0.data
     isHumanReadyPointer0 = <int*>isHumanReady0.data
     humanMovePointer0 = <int*>humanMove0.data
+    numChildrenPointer0 = <int*>numChildren0.data
+    diricletPointer0 = <float*>dirichlet0.data
+    diriCReadyPointer0 = <int*>diriCReady0.data
+    diriModelReadyPointer0 = <int*>diriModelReady0.data
     errorPointer0 = <int *> error0.data
     
-    thread0 = threading.Thread(target=runPlayMatchC, args=(400, gameState0, v0, p0, isCReady0, isModelReady0, isCReadyForHuman0, isHumanReady0, humanMove0, error0))
+    thread0 = threading.Thread(target=runPlayMatchC, args=(400, gameState0, v0, pType0, pMove0, pBlock0, isCReady0, isModelReady0, isCReadyForHuman0, isHumanReady0, humanMove0, numChildren0, dirichlet0, diriCReady0, diriModelReady0, error0))
     thread0.start()
     
     cdef int readMove
@@ -89,9 +116,13 @@ cpdef playMatch():
             modelInput = np.transpose(np.reshape(gameState0, [BATCH_SIZE, NUM_CHANNELS, NUM_ROWS, NUM_COLS]), (0, 2, 3, 1))
             modelOut = model.predict(modelInput)
             v_model = modelOut[0]
-            p_model = modelOut[1].flatten()
+            p_type_model = modelOut[1].flatten()
+            p_move_model = modelOut[2].flatten()
+            p_block_model = modelOut[3].flatten()
             v0[:] = v_model[:, 0]
-            p0[:] = p_model[:]
+            pType0[:] = p_type_model[:]
+            pMove0[:] = p_move_model[:]
+            pBlock0[:] = p_block_model[:]
             isCReadyPointer0[0] = 0
             isModelReadyPointer0[0] = 1
         if isCReadyForHumanPointer0[0] == 1:
@@ -102,13 +133,16 @@ cpdef playMatch():
             
     thread0.join()
 
-cdef runPlayMatchC(int numSimulations, np.ndarray[DTYPE_INT_t] gameState, np.ndarray[DTYPE_t] v, np.ndarray[DTYPE_t] p,
+cdef runPlayMatchC(int numSimulations, np.ndarray[DTYPE_INT_t] gameState, np.ndarray[DTYPE_t] v,
+np.ndarray[DTYPE_t] pType, np.ndarray[DTYPE_t] pMove, np.ndarray[DTYPE_t] pBlock,
 np.ndarray[DTYPE_INT_t] isCReady, np.ndarray[DTYPE_INT_t] isModelReady,
 np.ndarray[DTYPE_INT_t] isCReadyForHuman, np.ndarray[DTYPE_INT_t] isHumanReady, np.ndarray[DTYPE_INT_t] humanMove,
+np.ndarray[DTYPE_INT_t] numChildren, np.ndarray[DTYPE_t] dirichlet, np.ndarray[DTYPE_INT_t] diriCReady, np.ndarray[DTYPE_INT_t] diriModelReady,
 np.ndarray[DTYPE_INT_t] error):
-    playMatchCython(numSimulations, <int *> gameState.data, <float *> v.data, <float *> p.data,
+    playMatchCython(numSimulations, <int *> gameState.data, <float *> v.data, <float *> pType.data, <float *> pMove.data, <float *> pBlock.data,
     <int *> isCReady.data, <int *> isModelReady.data,
     <int *> isCReadyForHuman.data, <int *> isHumanReady.data, <int *> humanMove.data,
+    <int *> numChildren.data, <float *> dirichlet.data, <int *> diriCReady.data, <int *> diriModelReady.data,
     <int *> error.data)
 ###########################################################################
 cpdef selfPlayFull():
