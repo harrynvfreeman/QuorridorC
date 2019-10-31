@@ -125,6 +125,11 @@ cpdef playMatch():
             pBlock0[:] = p_block_model[:]
             isCReadyPointer0[0] = 0
             isModelReadyPointer0[0] = 1
+        if diriCReadyPointer0[0] == 1:
+            diri = np.random.dirichlet([0.07]*numChildrenPointer0[0]).astype('f')
+            dirichlet0[0:numChildrenPointer0[0]] = diri[:]
+            diriCReadyPointer0[0] = 0
+            diriModelReadyPointer0[0] = 1
         if isCReadyForHumanPointer0[0] == 1:
             readMove = int(input("What is your move? "))
             humanMovePointer0[0] = readMove
